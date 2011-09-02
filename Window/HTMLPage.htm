@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="Css/kino.Window.css" rel="stylesheet" type="text/css" />
+    <script src="../Script/jquery-1.6.1.min.js" type="text/javascript"></script>
+    <script src="Window.js" type="text/javascript"></script>
+    <script src="jquery.kDrag.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#test").click(function () {
+                var w = new kino.Window({
+                    winobj:window.top,
+                    value: "ssdfs<br/>sdf<br/>ssdfs<br/>sdf<br/>sdfs<br/>sdf<br/>ssdfs<br/>sdf<br/>"
+                });
+                w.open();
+            });
+            $("#test2").click(function () {
+                var w = new kino.Window({
+                    type:"iframe",
+                    value: "HTMLPage2.htm"
+                });
+                w.open();
+            });
+        });
+    </script>
+</head>
+<body>
+<input type="button" id="test"/>
+<input type="button" id="test2"/>
+</body>
+</html>
