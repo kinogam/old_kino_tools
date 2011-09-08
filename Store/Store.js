@@ -5,8 +5,10 @@
 */
 (function () {
     var kino;
-    if (window.kino == null)
-        kino = window.kino = {};
+    if (typeof window.kino === "undefined")
+        window.kino = {};
+
+    kino = window.kino;
 
     var k = kino.Store = function (data) {
         if (data !== null && Object.prototype.toString.call(data) == "[object Array]") {
