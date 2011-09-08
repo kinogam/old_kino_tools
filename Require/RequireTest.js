@@ -6,6 +6,10 @@ test("clear page test", function () {
     notEqual(window.TestClass, null);
     kino.Require("../Store/Store.js");
     notEqual(window.kino.Store, null);
+    //kino.Require("/TestClass2.js");
+    //notEqual(window.TestClass2, null);
+//    kino.Require("http://localhost:8239/kino/Window/Window.js");
+//    notEqual(window.kino.Window, null);
 });
 
 test("repetition load test", function () {
@@ -19,3 +23,5 @@ test("repetition load test", function () {
     equal(i, 1);
 
 });
+
+

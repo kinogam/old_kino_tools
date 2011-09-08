@@ -21,17 +21,28 @@
         ///回调函数
         ///</param>
         ///<returns/>
-        if (typeof (key) != "undefined")
+        if (key != null)
             if (typeof (p.loadHash[key]) != "undefined" && p.loadHash[key] == true)
                 return;
+
 
         var xr = p.getXMLHttpRequest();
         xr.onreadystatechange = function () {
             if (xr.readyState == 4 && ((xr.status >= 200 && xr.status < 300) || xr.status == 304 || xr.status == 1223)) {
-                eval(xr.responseText);
-                p.loadHash[key] = true;
-                callback.call();
+                try {
+                    eval(xr.responseText);
+                    if (key != null)
+                        p.loadHash[key] = true;
+                }
+                catch (e) {
+                    if (key != null)
+                        p.loadHash[key] = false;
+                }
+                finally {
+                    callback.call();
+                }
             }
+
         };
         xr.open("GET", p.handleUrl(url), false);
         xr.send(null);
