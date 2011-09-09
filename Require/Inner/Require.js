@@ -39,7 +39,8 @@
                         p.loadHash[key] = false;
                 }
                 finally {
-                    callback.call();
+                    if (typeof (callback) != "undefined" && typeof(callback) == "function")
+                        callback.call();
                 }
             }
 

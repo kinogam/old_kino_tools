@@ -2,17 +2,12 @@
 /// <reference path="jquery.kDrag.js" />
 
 (function () {
-    var kino;
-    if (typeof window.kino === "undefined")
-        window.kino = {};
-
-    kino = window.kino;
-
+    kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
+    kino.Require("jquery.kDrag.js", "jquery.kDrag");
 
     var p = {};
 
-
-    var w = kino.Window = function (s) {
+    var w = window.kino.Window = function (s) {
         p.init.call(this);
         for (var i in s)
             this[i] = s[i];

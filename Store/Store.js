@@ -18,7 +18,6 @@
         }
         else
             this.initStore();
-
     }
 
 

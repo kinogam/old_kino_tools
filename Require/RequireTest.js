@@ -8,8 +8,17 @@ test("clear page test", function () {
     notEqual(window.kino.Store, null);
     //kino.Require("/TestClass2.js");
     //notEqual(window.TestClass2, null);
-//    kino.Require("http://localhost:8239/kino/Window/Window.js");
-//    notEqual(window.kino.Window, null);
+    //    kino.Require("http://localhost:8239/kino/Window/Window.js");
+    //    notEqual(window.kino.Window, null);
+
+
+    kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
+    notEqual(window.$, null, "jquery has been loaded");
+    stop();
+    $(function () {
+        start(); 
+        ok(true);
+    });
 });
 
 test("repetition load test", function () {

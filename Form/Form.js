@@ -1,14 +1,10 @@
 ﻿/// <reference path="../Script/jquery-1.6.1.min.js" />
 (function () {
-    var kino;
-    if (typeof window.kino === "undefined")
-        window.kino = {};
-
-    kino = window.kino;
+    kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
 
     var p = {};
 
-    var f = kino.Form = function (s) {
+    var f = window.kino.Form = function (s) {
         p.init.call(this);
         for (var i in s)
             this[i] = s[i];
@@ -552,4 +548,3 @@
 
 
 })();
-
