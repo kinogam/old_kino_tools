@@ -254,6 +254,19 @@ test("pure array, distinct test", function () {
 });
 
 
+//test("not in test", function () {
+//    var store = new kino.Store();
+//    store.data = [{ "col1": "1", "col2": "a" },
+//    { "col1": "2", "col2": "b" },
+//    { "col1": "3", "col2": "c" },
+//    { "col1": "4", "col2": "d" },
+//    { "col1": "5", "col2": "e"}];
+//    store.notIn("col2", [
+//        "b", "c"
+//    ]);
+//});
+
+
 module("ajax query");
 
 function getAjaxStore() {
@@ -284,6 +297,8 @@ test("check ajax request", function () {
         notEqual(s.param.where, null, "where");
     });
 });
+
+
 
 module("other");
 test("create new object with constructor", function () {

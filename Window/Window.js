@@ -127,7 +127,7 @@
         },
         "iframe": function () {
             return "<iframe class='item-frame' allowtransparency='true' src='"
-            + this.value + "' frameborder='0' width='" + String(this.width - 10) + "'></iframe>";
+            + this.value + "' frameborder='0' width='" + String(this.width - 20) + "'></iframe>";
         }
     };
 

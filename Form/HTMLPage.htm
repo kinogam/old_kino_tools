@@ -4,30 +4,29 @@
 <head>
     <title></title>
     <script src="../Script/jquery-1.6.1.min.js" type="text/javascript"></script>
-    <script src="My97DatePicker/WdatePicker.js" type="text/javascript"></script>
-    <script src="DateHelper.js" type="text/javascript"></script>
-    <script src="Form.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function () {
-            var f = new kino.Form();
-            f.renderTo($("div")[0]);
-            f.addItem({
-                type: "date",
-                name: "datetime",
-                label: "日期",
-                realformat: "yyyymmdd",
-                showformat: "yyyy年mm月dd日",
-                value: "20100101"
+            //            $("select").change(function () {
+            //                alert($(this).find("option:selected").val());
+            //            });
+            //            $("select option:nth-child(2)").attr("selected", true);
+            //            $("select").trigger("change");
+            var dom = document.createElement("div");
+            dom.innerHTML = "<select><option value='1'>1</option><option value='2'>2</option></select>";
+            $(dom).find("select").change(function () {
+                alert($(this).find("option:selected").val());
             });
-            f.bind();
-            $("input[type=button]").click(function () {
-                alert(f.getParams().datetime);
-            });
+            $(dom).find("select").trigger("change");
         });
     </script>
 </head>
 <body>
-<div></div>
-<input type="button" />
+<!--<select>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+</select>-->
+
 </body>
 </html>

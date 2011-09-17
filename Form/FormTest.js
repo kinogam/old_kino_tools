@@ -243,40 +243,44 @@ test("ajax list bind test", function () {
     //    equal($(f.render).find(".k_f_list_al1 option")[0].innerHTML, "b22");
 });
 
-/*
+
 test("combo bind test", function () {
-var f = new kino.Form();
+    var f = new kino.Form();
 
-f.postHandle = function (action, param, callback) {
-callback.call(null, [{ id: "id1", name: "testname1" }, { id: "id2", name: "testname2"}]);
-}
+    f.postHandle = function (action, param, callback) {
+        callback([{ id: "id1", name: "testname1" }, { id: "id2", name: "testname2"}]);
+    }
 
-f.renderTo(document.createElement("div"));
-f.addItem({
-type: "combo",
-name: "list1",
-comboTo: "list2",
-label: "关联列表1",
-data: [{ ax: "a11", value: "b22", text: "c33" }, { ax: "a1", value: "bx2", text: "cx3"}]
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "combo",
+        name: "list1",
+        comboTo: "list2",
+        label: "关联列表1",
+        data: [{ value: "1", text: "1" }, { value: "2", text: "2"}]
+    });
+
+    f.addItem({
+        type: "list",
+        name: "list2",
+        label: "关联列表2",
+        action: "GetComboList",
+        isAutoGet: false,
+        pname: "id",
+        dataField: "id",
+        textField: "name",
+        display: "none"
+    });
+
+    f.bind();
+    equal($(f.render).find(".k_f_list_list2").html(), "", "auto get is false");
+
+    $(f.render).find(".k_f_combo_list1 option:nth-child(2)").attr("selected", true);
+    $(f.render).find(".k_f_combo_list1").trigger("change");
+    notEqual($(f.render).find(".k_f_list_list2").html(), "", "combo trigger");
+
 });
 
-f.addItem({
-type: "list",
-name: "list2",
-label: "关联列表2",
-action: "GetComboList",
-autoGet: false,
-param: "id",
-dataField: "id",
-textField: "name",
-display: "none"
-});
-
-f.bind();
-
-equal($(f.render).find(".k_f_list_list2").html(), "");
-});
-*/
 
 
 
@@ -365,6 +369,20 @@ test("date type test", function () {
 //    equal($(f.render).find(".k_f_date_datetime").attr("realvalue"), "2011-8-11 0:00:00");
 //    equal($(f.render).find(".k_f_date_datetime").attr("value"), "2011-8-11");
 //});
+
+test("password test", function () {
+    var f = new kino.Form({
+        render: document.createElement("div"),
+        items: [{
+            name: "item1",
+            label: "名字",
+            type: "pwd"
+        }]
+    });
+
+    f.bind();
+    equal($(f.render).find(".k_f_pwd_item1").length > 0, true);
+});
 
 module("validate");
 

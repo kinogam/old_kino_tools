@@ -2,12 +2,28 @@
 (function () {
     kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
 
-    var p = {};
+    var p = {
+    };
 
     var f = window.kino.Form = function (s) {
         p.init.call(this);
         for (var i in s)
             this[i] = s[i];
+        p.InitItemMap.call(this, s);
+    }
+
+    p.InitItemMap = function (s) {
+        if (s == null)
+            return;
+        if (s.items != null && s.items.length > 0) {
+            for (var i = 0; i < s.items.length; i++)
+                this.itemMap[s.items[i].name] = s.items[i];
+        }
+        if (s.groups != null && s.groups.length > 0) {
+            for (var j = 0; j < s.groups.length; j++)
+                for (var i = 0; i < s.groups[j].items.length; i++)
+                    this.itemMap[s.groups[j].items[i].name] = s.groups[j].items[i];
+        }
     }
 
 
@@ -19,6 +35,7 @@
         this.items = new Array();
         this.groups = new Array();
         this.initValues = {};
+        this.itemMap = {};
         this.colnum = 1;
         this.enableEmptyFix = true;
         this.isView = false;
@@ -56,6 +73,7 @@
             }
             this.groups.push(newgroup);
         }
+        this.itemMap[item.name] = item;
     }
 
     f.prototype.setValues = function (s) {
@@ -228,6 +246,7 @@
 
 
 
+
     //设置或获取html内容
     p.itemHtml = {
         msg: {
@@ -268,6 +287,25 @@
                 return $(this.render).find(".k_f_txt_" + item.name).val();
             }
         },
+        pwd: {
+            getHtml: function (item) {
+                var html = new Array();
+                html.push("<input type='password' class='k_f_pwd k_f_pwd_" + item.name + "'");
+                if (item.display != null && item.display == false)
+                    html.push(" style='display:none' ");
+
+                if (this.initValues[item.name] != null)
+                    html.push(" value='" + this.initValues[item.name] + "'");
+                else if (item.value != null)
+                    html.push(" value='" + item.value + "'");
+
+                html.push(" />");
+                return html.join("");
+            },
+            getValue: function (item) {
+                return $(this.render).find(".k_f_pwd_" + item.name).val();
+            }
+        },
         list: {
             getHtml: function (item) {
                 return p.getListHtml.call(this, item);
@@ -280,21 +318,22 @@
             getHtml: function (item) {
                 var render = this.render;
                 var fobj = this;
-                var jdom = $(this.render).find(".k_f_list_" + item.name);
-
-                jdom.change(function () {
+                var jdom = $(this.render).find(".k_f_combo_" + item.name);
+                var comboTo = this.itemMap[item.comboTo];
+                jdom.live("change", function () {
                     var param = {};
-                    param[item.pname] = $(this).find("option:selected").val();
-                    fobj.postHandle(item.action, param, function (result) {
-                        var obj = $(render).find("." + item.comboTo);
-                        p.getListHtml.call(fobj, item, true);
+                    param[comboTo.pname] = $(this).find("option:selected").val();
+                    var dom = p.findDomByItem.call(fobj, comboTo);
+                    fobj.postHandle(comboTo.action, param, function (result) {
+                        dom.innerHTML = p.getOptionHtml.call(fobj, result, comboTo);
+
                     });
 
                 });
                 return p.getListHtml.call(this, item);
             },
             getValue: function () {
-
+                return $(this.render).find(".k_f_list_" + item.name + " option:selected").val();
             }
         },
         date: {
@@ -332,6 +371,9 @@
         }
     };
 
+    p.findDomByItem = function (item) {
+        return $(this.render).find(".k_f_" + item.type + "_" + item.name)[0];
+    };
 
     //验证函数
     p.validate = {
@@ -350,10 +392,11 @@
         var html = new Array();
         var fobj = this;
         if (noContainer == null || noContainer == false)
-            html.push("<select class='k_f_list k_f_list_" + item.name + "'>");
+            html.push("<select class='k_f_" + item.type + " k_f_" + item.type + "_" + item.name + "'>");
 
         //判断是否自动获取数据并且有action属性，是则采用ajax请求数据填充列表
-        if (item.isAutoGet != true &&
+
+        if ((item.isAutoGet == undefined || item.isAutoGet == true) &&
             item.action != undefined && item.action != "") {
             var dom = $(this.render).find(".k_f_list_" + item.name)[0];
 
@@ -368,6 +411,8 @@
             html.push("</select>");
         return html.join("");
     };
+
+
 
     p.getOptionHtml = function (data, item) {
         if (data == null)
