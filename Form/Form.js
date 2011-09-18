@@ -1,7 +1,8 @@
 ﻿/// <reference path="../Script/jquery-1.6.1.min.js" />
+/// <reference path="My97DatePicker/WdatePicker.js" />
+
 (function () {
     kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
-
     var p = {
     };
 

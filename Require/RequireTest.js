@@ -22,15 +22,27 @@ test("clear page test", function () {
 });
 
 test("repetition load test", function () {
+    if (window.localStorage)
+        window.localStorage.removeItem("tc");
+
     var i = 0;
+    stop();
     kino.Require("TestClass.js", "tc", function () {
         i++;
     });
     kino.Require("TestClass.js", "tc", function () {
         i++;
     });
+    start();
     equal(i, 1);
 
 });
 
 
+test("local storage support", function () {
+    stop();
+    kino.Require("TestClass.js", "tc");
+    start();
+    if (window.localStorage)
+        notEqual(window.localStorage.getItem("tc"), null, "has been stored");
+});

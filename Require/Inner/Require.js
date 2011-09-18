@@ -21,9 +21,13 @@
         ///回调函数
         ///</param>
         ///<returns/>
-        if (key != null)
+        if (key != null) {
             if (typeof (p.loadHash[key]) != "undefined" && p.loadHash[key] == true)
                 return;
+
+            if (p.storageLoad(key))
+                return;
+        }
 
 
         var xr = p.getXMLHttpRequest();
@@ -31,15 +35,17 @@
             if (xr.readyState == 4 && ((xr.status >= 200 && xr.status < 300) || xr.status == 304 || xr.status == 1223)) {
                 try {
                     eval(xr.responseText);
-                    if (key != null)
+                    if (key != null) {
                         p.loadHash[key] = true;
+                        window.localStorage.setItem(key, xr.responseText);
+                    }
                 }
                 catch (e) {
                     if (key != null)
                         p.loadHash[key] = false;
                 }
                 finally {
-                    if (typeof (callback) != "undefined" && typeof(callback) == "function")
+                    if (typeof (callback) != "undefined" && typeof (callback) == "function")
                         callback.call();
                 }
             }
@@ -81,4 +87,29 @@
     p.getXMLHttpRequest = function () {
         return window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
     };
+
+    p.storageLoad = function (key) {
+        var hasLoaded = false;
+        if (window.localStorage) {
+            var item = window.localStorage.getItem(key);
+            if (item != null) {
+                try {
+                    eval(item);
+                    p.loadHash[key] = true;
+                    hasLoaded = true;
+                }
+                catch (e) {
+                    if (key != null)
+                        p.loadHash[key] = false;
+                }
+                finally {
+                    if (typeof (callback) != "undefined" && typeof (callback) == "function")
+                        callback.call();
+                }
+            }
+        }
+
+        return hasLoaded;
+    };
+
 })();
