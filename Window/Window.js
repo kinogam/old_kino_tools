@@ -2,9 +2,11 @@
 /// <reference path="jquery.kDrag.js" />
 
 (function () {
-    kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
-    kino.Require("jquery.kDrag.js", "jquery.kDrag");
+    var kino;
+    if (typeof window.kino === "undefined")
+        window.kino = {};
 
+    kino = window.kino;
     var p = {};
 
     var w = window.kino.Window = function (s) {

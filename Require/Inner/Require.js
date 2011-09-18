@@ -7,7 +7,7 @@
 
     var p = {};
     p.loadHash = {};
-    var r = kino.Require = function (url, key, callback) {
+    var r = kino.Require = function (url, key, callback, _type) {
         ///<summary>
         ///动态加载javascript
         ///</summary>
@@ -21,12 +21,17 @@
         ///回调函数
         ///</param>
         ///<returns/>
+        var type = "";
+        if (_type == "css" || /\.css$/.test(url))
+            type = "css";
+
         if (key != null) {
             if (typeof (p.loadHash[key]) != "undefined" && p.loadHash[key] == true)
                 return;
 
-            if (p.storageLoad(key))
-                return;
+            if (type != "css")
+                if (p.storageLoad(key))
+                    return;
         }
 
 
@@ -34,7 +39,10 @@
         xr.onreadystatechange = function () {
             if (xr.readyState == 4 && ((xr.status >= 200 && xr.status < 300) || xr.status == 304 || xr.status == 1223)) {
                 try {
-                    eval(xr.responseText);
+                    if (type == "css")
+                        p.loadCss(url);
+                    else
+                        eval(xr.responseText);
                     if (key != null) {
                         p.loadHash[key] = true;
                         window.localStorage.setItem(key, xr.responseText);
@@ -53,6 +61,16 @@
         };
         xr.open("GET", p.handleUrl(url), false);
         xr.send(null);
+    }
+
+    p.loadCss = function (url) {
+        var ss = document.getElementsByTagName("script");
+        var currentScript = ss[ss.length - 1];
+        var link = document.createElement("link");
+        link.href = p.handleUrl(url);
+        link.rel = "stylesheet";
+        link.type = "text/css"
+        currentScript.parentNode.appendChild(link);
     }
 
     p.handleUrl = function (url) {

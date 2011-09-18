@@ -6,10 +6,6 @@ test("clear page test", function () {
     notEqual(window.TestClass, null);
     kino.Require("../Store/Store.js");
     notEqual(window.kino.Store, null);
-    //kino.Require("/TestClass2.js");
-    //notEqual(window.TestClass2, null);
-    //    kino.Require("http://localhost:8239/kino/Window/Window.js");
-    //    notEqual(window.kino.Window, null);
 
 
     kino.Require("../Script/jquery-1.6.1.min.js", "jquery");
@@ -46,3 +42,14 @@ test("local storage support", function () {
     if (window.localStorage)
         notEqual(window.localStorage.getItem("tc"), null, "has been stored");
 });
+
+
+
+
+test("css require", function () {
+    stop();
+    kino.Require("css/test.css", "testcss");
+    start();
+    equal($("body").css("background-color"), "#ccc");
+});
+
