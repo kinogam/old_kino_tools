@@ -257,7 +257,7 @@
         msg: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<span class='k_f_msg k_f_msg_" + item.name + "'");
+                html.push("<span name='" + item.name + "' class='k_f_msg k_f_msg_" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
                 html.push(">");
@@ -276,7 +276,7 @@
         txt: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<input type='text' class='k_f_txt k_f_txt_" + item.name + "'");
+                html.push("<input type='text' name='" + item.name + "' class='k_f_txt k_f_txt_" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
 
@@ -295,7 +295,7 @@
         pwd: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<input type='password' class='k_f_pwd k_f_pwd_" + item.name + "'");
+                html.push("<input type='password' name='" + item.name + "' class='k_f_pwd k_f_pwd_" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
 
@@ -343,6 +343,7 @@
         },
         date: {
             getHtml: function (item) {
+                /**set format**/
                 var html = new Array();
                 var defaultRF = "yyyy-mm-dd";
                 var defaultSF = "yyyy-mm-dd";
@@ -351,19 +352,32 @@
                 if (item.showformat != null)
                     defaultSF = item.showformat;
 
-                html.push("<input class='k_f_date k_f_date_" + item.name + "' type='text' ");
+                /**set value**/
+                var value = null;
+                if (this.initValues[item.name] != null)
+                    value = this.initValues[item.name];
+                else if (item.value != null)
+                    value = item.value;
+
+                html.push("<input name='" + item.name + "' class='k_f_date k_f_date_" + item.name + "' type='text' ");
                 html.push("onfocus=\"WdatePicker({realDateFmt:'" + DateHelper.t2my97(defaultRF) + "',")
                 html.push("dateFmt:'" + DateHelper.t2my97(defaultSF) + "',readOnly:true})\"");
-                if (item.value != null) {
-                    html.push("  realvalue='" + item.value + "' ");
-                    html.push("  value='");
-                    html.push(DateHelper.formatDateStr(item.value, defaultRF, defaultSF));
-                    html.push("' ");
-                }
-                else if (this.initValues[item.name] != null) {
-                    html.push("  realvalue='" + this.initValues[item.name] + "' ");
-                    html.push("  value='");
-                    html.push(DateHelper.formatDateStr(this.initValues[item.name], defaultRF, defaultSF));
+                if (value != null) {
+                    html.push("  realvalue='");
+                    if (p.isDateType(value))
+                        html.push(DateHelper.date2String(value, defaultRF));
+                    else if (p.isNumber(value))
+                        html.push(DateHelper.getFormatDateByAddDay(value, defaultRF));
+                    else
+                        html.push(value);
+
+                    html.push("'  value='");
+                    if (p.isDateType(value))
+                        html.push(DateHelper.date2String(value, defaultSF));
+                    else if (p.isNumber(value))
+                        html.push(DateHelper.getFormatDateByAddDay(value, defaultSF));
+                    else
+                        html.push(DateHelper.formatDateStr(value, defaultRF, defaultSF));
                     html.push("' ");
                 }
                 html.push(">");
@@ -376,6 +390,12 @@
         }
     };
 
+    p.isDateType = function (obj) {
+        return Object.prototype.toString.call(obj) == "[object Date]";
+    }
+    p.isNumber = function (obj) {
+        return typeof (obj) == "number";
+    }
     p.findDomByItem = function (item) {
         return $(this.render).find(".k_f_" + item.type + "_" + item.name)[0];
     };
@@ -397,7 +417,7 @@
         var html = new Array();
         var fobj = this;
         if (noContainer == null || noContainer == false)
-            html.push("<select class='k_f_" + item.type + " k_f_" + item.type + "_" + item.name + "'>");
+            html.push("<select name='" + item.name + "' class='k_f_" + item.type + " k_f_" + item.type + "_" + item.name + "'>");
 
         //判断是否自动获取数据并且有action属性，是则采用ajax请求数据填充列表
 

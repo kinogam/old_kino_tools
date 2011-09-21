@@ -39,6 +39,27 @@ test("use addItem method for adding", function () {
     equal(f.groups[0].items.length, 2);
 });
 
+test("item name test", function () {
+    var f = new kino.Form();
+    f.render = document.createElement("div");
+    f.addItem({
+        name: "item1",
+        label: "名字",
+        type: "txt"
+    });
+
+    f.addItem({
+        name: "item2",
+        label: "名字2",
+        type: "txt"
+    });
+
+    f.bind();
+
+    equal($(f.render).find("[name=item1]").length, 1);
+    equal($(f.render).find("[name=item2]").length, 1);
+});
+
 test("display none test", function () {
     var f = new kino.Form({
         render: document.createElement("div"),
@@ -344,31 +365,49 @@ test("date type test", function () {
     equal($(f.render).find(".k_f_date_datetime").attr("value"), "2010-01-01");
 });
 
-//test("date test", function () {
-//    var date = DateHelper.string2Date("2011/8/1 0:00:00", "yyyy/mm/dd");
-//    equal(date.getDay(), 1);
-//    equal(date.getMonth(), 7);
-//    equal(date.getFullYear(), 2011);
-//});
+test("use Date Object for date type value", function () {
+    var testDate = new Date("");
+    testDate.setFullYear(2011);
+    testDate.setMonth(0);
+    testDate.setDate(1);
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
 
-//test("date type test with setValues", function () {
-//    var f = new kino.Form();
-//    f.renderTo(document.createElement("div"));
-//    f.addItem({
-//        type: "date",
-//        name: "datetime",
-//        label: "日期",
-//        realformat: "yyyy-mm-dd",
-//        showformat: "yyyy-mm-dd"
-//    });
-//    f.setValues({
-//        datetime: "2011-8-11 0:00:00"
-//    });
-//    f.bind();
-//    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
-//    equal($(f.render).find(".k_f_date_datetime").attr("realvalue"), "2011-8-11 0:00:00");
-//    equal($(f.render).find(".k_f_date_datetime").attr("value"), "2011-8-11");
-//});
+    f.addItem({
+        type: "date",
+        name: "datetime",
+        label: "日期",
+        realformat: "yyyymmdd",
+        showformat: "yyyy-mm-dd",
+        value: testDate
+    });
+    f.bind();
+    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
+    equal($(f.render).find(".k_f_date_datetime").attr("realvalue"), "20110101");
+    equal($(f.render).find(".k_f_date_datetime").attr("value"), "2011-01-01");
+});
+
+test("use Number for date type value", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+
+    f.addItem({
+        type: "date",
+        name: "datetime",
+        label: "日期",
+        realformat: "yyyymmdd",
+        showformat: "yyyy-mm-dd",
+        value: -1
+    });
+    f.bind();
+    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
+    notEqual($(f.render).find(".k_f_date_datetime").attr("realvalue"), "");
+    notEqual($(f.render).find(".k_f_date_datetime").attr("value"), "");
+});
+
+
+
+
 
 test("password test", function () {
     var f = new kino.Form({
@@ -406,7 +445,6 @@ test("txt required test", function () {
 
     result = f.check();
     equal(result.isSuccess, true, "required item has been set");
-
 });
 
 test("use regular expression to validate item value", function () {
