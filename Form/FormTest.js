@@ -60,6 +60,8 @@ test("item name test", function () {
     equal($(f.render).find("[name=item2]").length, 1);
 });
 
+
+
 test("display none test", function () {
     var f = new kino.Form({
         render: document.createElement("div"),
@@ -77,7 +79,7 @@ test("display none test", function () {
     });
 
     f.bind();
-    var display = $(f.render).find(".k_f_txt_tips")[0].style.display;
+    var display = $(f.render).find(".kf-txt-tips")[0].style.display;
 
     equal(display, "none");
 });
@@ -154,7 +156,7 @@ test("msg type test", function () {
     });
     var render = document.createElement("div");
     f.bind(render);
-    equal($(render).find("span.k_f_msg_item1").html(), "hellomsg");
+    equal($(render).find("span.kf-msg-item1").html(), "hellomsg");
 });
 
 test("txt test", function () {
@@ -170,10 +172,10 @@ test("txt test", function () {
 
     notEqual(render.innerHTML, null);
 
-    equal($(render).find("span.k_f_label").length, 1);
-    equal($(render).find("span.k_f_label_item1").length, 1);
-    equal($(render).find("input.k_f_txt").length, 1);
-    equal($(render).find("input.k_f_txt_item1").length, 1);
+    equal($(render).find("span.kf-label").length, 1);
+    equal($(render).find("span.kf-label-item1").length, 1);
+    equal($(render).find("input.kf-txt").length, 1);
+    equal($(render).find("input.kf-txt-item1").length, 1);
 });
 
 test("txt default value test", function () {
@@ -188,7 +190,7 @@ test("txt default value test", function () {
     var render = document.createElement("div");
     f.bind(render);
     notEqual(render.innerHTML, null);
-    equal($(render).find(".k_f_txt").val(), "hello");
+    equal($(render).find(".kf-txt").val(), "hello");
 });
 
 test("list test", function () {
@@ -206,7 +208,7 @@ test("list test", function () {
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_list1").length, 1);
+    equal($(f.render).find(".kf-list-list1").length, 1);
 });
 
 test("list default field test", function () {
@@ -222,8 +224,8 @@ test("list default field test", function () {
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_list1 option")[0].value, "a11");
-    equal($(f.render).find(".k_f_list_list1 option")[0].innerHTML, "b22");
+    equal($(f.render).find(".kf-list-list1 option")[0].value, "a11");
+    equal($(f.render).find(".kf-list-list1 option")[0].innerHTML, "b22");
 });
 
 test("list default use text and value column for textField and dataField", function () {
@@ -239,8 +241,8 @@ test("list default use text and value column for textField and dataField", funct
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_list1 option")[0].value, "b22");
-    equal($(f.render).find(".k_f_list_list1 option")[0].innerHTML, "c33");
+    equal($(f.render).find(".kf-list-list1 option")[0].value, "b22");
+    equal($(f.render).find(".kf-list-list1 option")[0].innerHTML, "c33");
 });
 
 test("ajax list bind test", function () {
@@ -260,8 +262,8 @@ test("ajax list bind test", function () {
 
     f.bind();
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_al1 option")[0].value, "a11");
-    //    equal($(f.render).find(".k_f_list_al1 option")[0].innerHTML, "b22");
+    equal($(f.render).find(".kf-list-al1 option")[0].value, "a11");
+    //    equal($(f.render).find(".kf-list_al1 option")[0].innerHTML, "b22");
 });
 
 
@@ -294,11 +296,11 @@ test("combo bind test", function () {
     });
 
     f.bind();
-    equal($(f.render).find(".k_f_list_list2").html(), "", "auto get is false");
+    equal($(f.render).find(".kf-list-list2").html(), "", "auto get is false");
 
-    $(f.render).find(".k_f_combo_list1 option:nth-child(2)").attr("selected", true);
-    $(f.render).find(".k_f_combo_list1").trigger("change");
-    notEqual($(f.render).find(".k_f_list_list2").html(), "", "combo trigger");
+    $(f.render).find(".kf-combo-list1 option:nth-child(2)").attr("selected", true);
+    $(f.render).find(".kf-combo-list1").trigger("change");
+    notEqual($(f.render).find(".kf-list-list2").html(), "", "combo trigger");
 
 });
 
@@ -323,8 +325,8 @@ test("set default selected index", function () {
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_list1 option:selected")[0].value, "bx22");
-    equal($(f.render).find(".k_f_list_list1 option:selected")[0].innerHTML, "cx32");
+    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx22");
+    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx32");
 });
 
 test("set default selected value", function () {
@@ -343,8 +345,8 @@ test("set default selected value", function () {
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal($(f.render).find(".k_f_list_list1 option:selected")[0].value, "bx2");
-    equal($(f.render).find(".k_f_list_list1 option:selected")[0].innerHTML, "cx3");
+    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx2");
+    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx3");
 });
 
 
@@ -360,9 +362,9 @@ test("date type test", function () {
         value: "20100101"
     });
     f.bind();
-    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
-    equal($(f.render).find(".k_f_date_datetime").attr("realvalue"), "20100101");
-    equal($(f.render).find(".k_f_date_datetime").attr("value"), "2010-01-01");
+    equal($(f.render).find(".kf-date-datetime").length > 0, true);
+    equal($(f.render).find(".kf-date-datetime").attr("realvalue"), "20100101");
+    equal($(f.render).find(".kf-date-datetime").attr("value"), "2010-01-01");
 });
 
 test("use Date Object for date type value", function () {
@@ -382,9 +384,9 @@ test("use Date Object for date type value", function () {
         value: testDate
     });
     f.bind();
-    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
-    equal($(f.render).find(".k_f_date_datetime").attr("realvalue"), "20110101");
-    equal($(f.render).find(".k_f_date_datetime").attr("value"), "2011-01-01");
+    equal($(f.render).find(".kf-date-datetime").length > 0, true);
+    equal($(f.render).find(".kf-date-datetime").attr("realvalue"), "20110101");
+    equal($(f.render).find(".kf-date-datetime").attr("value"), "2011-01-01");
 });
 
 test("use Number for date type value", function () {
@@ -400,9 +402,9 @@ test("use Number for date type value", function () {
         value: -1
     });
     f.bind();
-    equal($(f.render).find(".k_f_date_datetime").length > 0, true);
-    notEqual($(f.render).find(".k_f_date_datetime").attr("realvalue"), "");
-    notEqual($(f.render).find(".k_f_date_datetime").attr("value"), "");
+    equal($(f.render).find(".kf-date-datetime").length > 0, true);
+    notEqual($(f.render).find(".kf-date-datetime").attr("realvalue"), "");
+    notEqual($(f.render).find(".kf-date-datetime").attr("value"), "");
 });
 
 
@@ -420,7 +422,7 @@ test("password test", function () {
     });
 
     f.bind();
-    equal($(f.render).find(".k_f_pwd_item1").length > 0, true);
+    equal($(f.render).find(".kf-pwd-item1").length > 0, true);
 });
 
 module("validate");
@@ -447,6 +449,8 @@ test("txt required test", function () {
     equal(result.isSuccess, true, "required item has been set");
 });
 
+
+
 test("use regular expression to validate item value", function () {
     var f = new kino.Form({
         render: document.createElement("div"),
@@ -469,6 +473,24 @@ test("use regular expression to validate item value", function () {
     var result = f.check();
     equal(result.isSuccess, true);
 });
+
+test("validate event test", function () {
+    var f = new kino.Form({
+        render: document.createElement("div"),
+        items: [{
+            name: "item1",
+            label: "名字",
+            type: "txt",
+            required: true
+        }]
+    });
+
+    f.bind();
+
+    $(f.render).find(".kf-txt-item1").trigger("blur");
+    equal($(f.render).find(".kf-txt-item1~.kf-alarm").css("visibility"), "visible");
+});
+
 
 module("get parameters");
 
@@ -496,9 +518,9 @@ test("text get parameter json", function () {
     f.bind();
 
 
-    $(f.render).find(".k_f_txt_label").val("val1");
-    $(f.render).find(".k_f_txt_tips").val("val2");
-    $(f.render).find(".k_f_txt_col").val("val3");
+    $(f.render).find(".kf-txt-label").val("val1");
+    $(f.render).find(".kf-txt-tips").val("val2");
+    $(f.render).find(".kf-txt-col").val("val3");
 
     var json = f.getParams();
     equal(json.label, "val1");
@@ -520,9 +542,6 @@ test("list get parameter json", function () {
     });
 
     f.bind();
-
-
-    $(f.render).find(".k_f_list_list1 option:selected").val();
 
     var json = f.getParams();
     equal(json.list1, "a1");
@@ -551,6 +570,25 @@ test("get model param for asp.net mvc", function () {
 
     var param = f.getModelParam("clientInfo");
     equal(param["clientInfo.item1"], "value1", "set model parameter name");
+});
+
+
+test("get paramters in the case of item name with special char", function () {
+    var f = new kino.Form({
+        render: document.createElement("div"),
+        items: [{
+            name: "model.a",
+            label: "标签",
+            type: "list",
+            data: [{ a: "a1", b: "b1" }, { a: "a2", b: "b2"}]
+        }]
+    });
+
+    f.bind();
+
+    var json = f.getParams();
+
+    equal(json["model.a"], "a1");
 });
 
 module("other");
@@ -653,7 +691,7 @@ test("view mode test", function () {
 
     f.bind();
 
-    equal($(f.render).find(".k_f_msg_item1").length > 0, true);
+    equal($(f.render).find(".kf-msg-item1").length > 0, true);
 });
 //module("event manage");
 

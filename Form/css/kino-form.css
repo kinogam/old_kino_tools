@@ -1,0 +1,95 @@
+﻿.kino-form
+{
+    font-size:12px;
+}
+.kino-form .kf-require
+{
+    color:Red;
+}
+
+.kino-form .kf-alarm
+{
+    float:right;
+    background: url(../images/erroricon.gif) no-repeat;
+    width:16px;
+    height:16px;
+}
+
+/*
+.kino-form .kf-label
+{
+	padding: 3px 3px 3px 0;
+}
+
+.kino-form .form-input
+{
+	padding: 1px 3px;
+}
+
+
+
+
+.kino-form .error-box-tl,
+.kino-form .error-box-tr,
+.kino-form .error-box-tc,
+.kino-form .error-box-cl,
+.kino-form .error-box-cr,
+.kino-form .error-box-bl,
+.kino-form .error-box-br,
+.kino-form .error-box-bc
+{
+	background-image: url(../images/error-tip-corners.gif);
+	background-repeat: no-repeat;
+}
+.kino-form .error-box-tc,
+.kino-form .error-box-bc
+{
+	height: 6px;
+	overflow: hidden;
+}
+.kino-form .error-box-tl,
+.kino-form .error-box-cl,
+.kino-form .error-box-bl
+{
+	padding-left: 6px;
+}
+.kino-form .error-box-tr,
+.kino-form .error-box-cr,
+.kino-form .error-box-br
+{
+	padding-right: 6px;
+}
+.kino-form .error-box-tr
+{
+	background-position: right 0;
+}
+.kino-form .error-box-tc
+{
+	height: 6px;
+	background-position: 0 -12px;
+}
+.kino-form .error-box-cl
+{
+	background-position: 0 -24px;
+}
+.kino-form .error-box-cr
+{
+	background-position: right -24px;
+}
+.kino-form .error-box-bl
+{
+	background-position: 0 -6px;
+}
+.kino-form .error-box-br
+{
+	background-position: right -6px;
+}
+.kino-form .error-box-bc
+{
+	background-position: 0 -18px;
+}
+.kino-form .error-box-body
+{
+	padding-left: 22px;
+	background: url(../images/erroricon.gif) no-repeat 3px center;
+}*/

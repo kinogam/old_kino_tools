@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../Require/Inner/Require.js" type="text/javascript"></script>
+    <script src="form_pkg.js" type="text/javascript" pkg="form_pkg"></script>
+    
+    <script type="text/javascript">
+        $(function () {
+            var f = new kino.Form({
+                render: document.getElementsByTagName("div")[0],
+                items: [
+                {
+                    name: "item1",
+                    label: "名字1",
+                    type: "txt",
+                    required: true,
+                    requiredMsg:"该值不能为空"
+                },
+                {
+                    name: "item2",
+                    label: "名字2",
+                    type: "txt"
+                },
+                {
+                    name: "item3",
+                    label: "日期",
+                    type: "date"
+                }
+                ]
+            });
+
+            f.bind();
+        });
+
+    </script>
+</head>
+<body>
+    <div>
+    </div>
+</body>
+</html>

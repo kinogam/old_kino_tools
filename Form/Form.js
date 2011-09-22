@@ -11,6 +11,17 @@
     };
 
     var f = window.kino.Form = function (s) {
+        ///<summary>
+        /// kino.Form
+        ///</summary>
+        ///<param name="s" type="Json">
+        ///Json = {
+        ///render:Dom,
+        ///items:Array,
+        ///groups:Array
+        ///};
+        ///</param>
+
         p.init.call(this);
         for (var i in s)
             this[i] = s[i];
@@ -46,10 +57,11 @@
         this.isView = false;
         this.bodyhtml = "@{groups}";
         this.gthtml = "<div class='kf-title'>@{gtitle}</div>";
-        this.grouphtml = "@{gthtml}<table>@{rows}</table>";
+        this.grouphtml = "@{gthtml}<table class='kino-form'>@{rows}</table>";
         this.rowhtml = "<tr>@{cells}</tr>";
-        this.cellhtml = "<td><span class='@{labelclass}'>@{label}:</span></td>";
-        this.cellhtml += "<td>@{item}</td>";
+        this.cellhtml = "<td><span class='kf-require' @{require}>*</span>";
+        this.cellhtml += "<span class='kf-label kf-label-@{name}'>@{label}:</span></td>";
+        this.cellhtml += "<td>@{item}<span class='kf-alarm' style='visibility:hidden'></span></td>";
         this.emptyCellHtml = "<td></td><td></td>";
         this.postHandle = $.post;
         this.events = {};
@@ -165,35 +177,65 @@
         var type = item.type;
         if (this.isView)
             type = "msg";
+        var requireStyle = " style='visibility:hidden' ";
+
+        if (item.required != undefined && item.required == true) {
+            requireStyle = " style='visibility:visible' ";
+            p.addVilidateEvent.call(this, item);
+        }
+
         return this.cellhtml
-                .replace("@{labelclass}", "k_f_label k_f_label_" + item.name)
-                .replace("@{label}", item.label)
-                .replace("@{item}", p.itemHtml[type].getHtml.call(this, item));
+                .replace(/@{require}/g, requireStyle)
+                .replace(/@{name}/g, item.name)
+                .replace(/@{label}/g, item.label)
+                .replace(/@{item}/g, p.itemHtml[type].getHtml.call(this, item));
     }
+
+    p.addVilidateEvent = function (item) {
+        if (item.type == undefined || item.name == undefined)
+            return;
+        var formObj = this;
+        $(".kf-" + item.type + "-" + p.replaceSC(item.name)).live("blur", function () {
+            if (p.checkItem.call(formObj, item))
+                $(this).find("~.kf-alarm").css({ visibility: "hidden" })
+            else
+                $(this).find("~.kf-alarm").css({ visibility: "visible" })
+        });
+
+        $(".kf-" + item.type + "-" + p.replaceSC(item.name) + "~.kf-alarm").live({
+            mouseover: function () {
+                // this.style.visibility = "visible";
+            },
+            mouseout: function () {
+                // this.style.visibility = "hidden";
+            }
+        });
+    };
+
+
+    p.checkItem = function (item) {
+        var val = p.itemHtml[item.type].getValue.call(this, item);
+
+        //非空约束
+        if (item.required && item.required == true
+        && !p.validate.required(val))
+            return false;
+
+        //正则约束
+        if (item.regex != undefined && item.regex.rstr != null
+        && !p.validate.regex(val, item.regex))
+            return false;
+
+        return true;
+    };
 
     f.prototype.check = function () {
         var allCheck = true;
 
         for (var i = 0; i < this.groups.length; i++) {
             var items = this.groups[i].items;
-            for (var j = 0; j < items.length; j++) {
-                var item = items[i];
-                var val = p.itemHtml[item.type].getValue.call(this, item);
-
-                //非空约束
-                if (item.required && item.required == true) {
-                    allCheck = p.validate.required(val);
-                    if (!allCheck)
-                        break;
-                }
-                //正则约束
-                if (item.regex != undefined && item.regex.rstr != null) {
-                    allCheck = p.validate.regex(val, item.regex);
-                    if (!allCheck)
-                        break;
-                }
-
-            }
+            for (var j = 0; j < items.length; j++)
+                allCheck = p.checkItem.call(this, items[i]);
         }
         return {
             isSuccess: allCheck
@@ -257,7 +299,7 @@
         msg: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<span name='" + item.name + "' class='k_f_msg k_f_msg_" + item.name + "'");
+                html.push("<span name='" + item.name + "' class='kf-msg kf-msg-" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
                 html.push(">");
@@ -270,13 +312,13 @@
                 return html.join("");
             },
             getValue: function (item) {
-                return $(this.render).find(".k_f_msg_" + item.name).val();
+                return $(this.render).find(".kf-msg-" + p.replaceSC(item.name)).val();
             }
         },
         txt: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<input type='text' name='" + item.name + "' class='k_f_txt k_f_txt_" + item.name + "'");
+                html.push("<input type='text' name='" + item.name + "' class='kf-txt kf-txt-" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
 
@@ -289,13 +331,14 @@
                 return html.join("");
             },
             getValue: function (item) {
-                return $(this.render).find(".k_f_txt_" + item.name).val();
+                return $(this.render).find(".kf-txt-" + p.replaceSC(item.name)).val();
             }
         },
         pwd: {
             getHtml: function (item) {
                 var html = new Array();
-                html.push("<input type='password' name='" + item.name + "' class='k_f_pwd k_f_pwd_" + item.name + "'");
+                html.push("<input type='password' name='" + item.name);
+                html.push("' class='kf-pwd kf-pwd-" + item.name + "'");
                 if (item.display != null && item.display == false)
                     html.push(" style='display:none' ");
 
@@ -308,7 +351,7 @@
                 return html.join("");
             },
             getValue: function (item) {
-                return $(this.render).find(".k_f_pwd_" + item.name).val();
+                return $(this.render).find(".kf-pwd-" + p.replaceSC(item.name)).val();
             }
         },
         list: {
@@ -316,14 +359,14 @@
                 return p.getListHtml.call(this, item);
             },
             getValue: function (item) {
-                return $(this.render).find(".k_f_list_" + item.name + " option:selected").val();
+                return $(this.render).find(".kf-list-" + p.replaceSC(item.name) + " option:selected").val();
             }
         },
         combo: {
             getHtml: function (item) {
                 var render = this.render;
                 var fobj = this;
-                var jdom = $(this.render).find(".k_f_combo_" + item.name);
+                var jdom = $(this.render).find(".kf-combo-" + item.name);
                 var comboTo = this.itemMap[item.comboTo];
                 jdom.live("change", function () {
                     var param = {};
@@ -338,7 +381,7 @@
                 return p.getListHtml.call(this, item);
             },
             getValue: function () {
-                return $(this.render).find(".k_f_list_" + item.name + " option:selected").val();
+                return $(this.render).find(".kf-list-" + p.replaceSC(item.name) + " option:selected").val();
             }
         },
         date: {
@@ -359,7 +402,7 @@
                 else if (item.value != null)
                     value = item.value;
 
-                html.push("<input name='" + item.name + "' class='k_f_date k_f_date_" + item.name + "' type='text' ");
+                html.push("<input name='" + item.name + "' class='kf-date kf-date-" + item.name + "' type='text' ");
                 html.push("onfocus=\"WdatePicker({realDateFmt:'" + DateHelper.t2my97(defaultRF) + "',")
                 html.push("dateFmt:'" + DateHelper.t2my97(defaultSF) + "',readOnly:true})\"");
                 if (value != null) {
@@ -385,9 +428,13 @@
                 return html.join("");
             },
             getValue: function (item) {
-                return $(this.render).find(".k_f_date_" + item.name).attr("realvalue");
+                return $(this.render).find(".kf-date_" + p.replaceSC(item.name)).attr("realvalue");
             }
         }
+    };
+
+    p.replaceSC = function (value) {
+        return value.replace(/\./g, "\\.");
     };
 
     p.isDateType = function (obj) {
@@ -397,13 +444,13 @@
         return typeof (obj) == "number";
     }
     p.findDomByItem = function (item) {
-        return $(this.render).find(".k_f_" + item.type + "_" + item.name)[0];
+        return $(this.render).find(".kf-" + item.type + "-" + item.name)[0];
     };
 
     //验证函数
     p.validate = {
         required: function (value) {
-            return (value != undefined && value != "");
+            return (value != undefined && value.replace(/^\s+|\s+$/g, "") != "");
         },
         regex: function (value, rs) {
             var r = (rs.option == undefined) ? new RegExp(rs.rstr) :
@@ -417,13 +464,13 @@
         var html = new Array();
         var fobj = this;
         if (noContainer == null || noContainer == false)
-            html.push("<select name='" + item.name + "' class='k_f_" + item.type + " k_f_" + item.type + "_" + item.name + "'>");
+            html.push("<select name='" + item.name + "' class='kf-" + item.type + " kf-" + item.type + "-" + item.name + "'>");
 
         //判断是否自动获取数据并且有action属性，是则采用ajax请求数据填充列表
 
         if ((item.isAutoGet == undefined || item.isAutoGet == true) &&
             item.action != undefined && item.action != "") {
-            var dom = $(this.render).find(".k_f_list_" + item.name)[0];
+            var dom = $(this.render).find(".kf-list-" + item.name)[0];
 
             this.postHandle(item.action, null, function (result) {
                 html.push(p.getOptionHtml.call(fobj, result, item));
