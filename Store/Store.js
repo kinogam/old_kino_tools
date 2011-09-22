@@ -4,13 +4,8 @@
 * Date: 2011-04-04
 */
 (function () {
-    var kino;
-    if (typeof window.kino === "undefined")
-        window.kino = {};
 
-    kino = window.kino;
-
-    var k = kino.Store = function (data) {
+    var store = function (data) {
         if (data !== null && Object.prototype.toString.call(data) == "[object Array]") {
             var store = new kino.Store();
             store.data = data;
@@ -21,7 +16,7 @@
     }
 
 
-    k.prototype = {
+    store.prototype = {
         initStore: function () {
             this.data = null;
             this.initController();
@@ -731,6 +726,15 @@
                 url += "&" + encodeURIComponent(i) + "=";
         }
         return url.replace(/^&/, "");
+    }
+
+    // Module
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = store;
+    }
+    else {
+        this.kino = this.kino ? this.kino : {};
+        this.kino.Store = store;
     }
 
 })();
