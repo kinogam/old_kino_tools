@@ -500,31 +500,35 @@ test("text get parameter json", function () {
         items: [{
             name: "label",
             label: "标签",
-            type: "txt"
+            type: "txt",
+            value: "val1"
         },
         {
             name: "tips",
             label: "提示",
-            type: "txt"
-        }
-        ,
+            type: "txt",
+            value: "val2"
+        },
+        {
+            name: "date",
+            label: "日期",
+            type: "date",
+            value: -1
+        },
         {
             name: "col",
             label: "字段",
-            type: "txt"
+            type: "txt",
+            value: "val3"
         }]
     });
 
     f.bind();
 
-
-    $(f.render).find(".kf-txt-label").val("val1");
-    $(f.render).find(".kf-txt-tips").val("val2");
-    $(f.render).find(".kf-txt-col").val("val3");
-
     var json = f.getParams();
     equal(json.label, "val1");
     equal(json.tips, "val2");
+    notEqual(json.date, null);
     equal(json.col, "val3");
 
 });

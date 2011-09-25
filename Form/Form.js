@@ -428,7 +428,7 @@
                 return html.join("");
             },
             getValue: function (item) {
-                return $(this.render).find(".kf-date_" + p.replaceSC(item.name)).attr("realvalue");
+                return $(this.render).find(".kf-date-" + p.replaceSC(item.name)).attr("realvalue");
             }
         }
     };
