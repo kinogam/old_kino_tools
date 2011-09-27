@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../../Script/jquery-1.6.1.min.js" type="text/javascript"></script>
+    <script src="../My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+    <link href="../css/kino-form.css" rel="stylesheet" type="text/css" />
+    <script src="../Form.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            var f = new kino.Form({
+                render: document.getElementById("test"),
+                items: [
+                    {
+                        name : "txt1",
+                        type : "txt",
+                        label : "文本",
+                        value : "测试文本",
+                    },
+                    {
+                        name: "txt2",
+                        type: "txt",
+                        label: "必填文本",
+                        required: true
+                    },
+                    {
+                        name: "txt3",
+                        type: "txt",
+                        label: "数字文本",
+                        regex:{
+                            rstr:"^\\d+$"
+                        }
+                    },
+                    {
+                        name: "date1",
+                        type: "date",
+                        label: "日期",
+                        value: -1
+                    },
+                ]
+            });
+
+            f.bind();
+
+            $("#check").click(function(){
+                if(f.check().isSuccess)
+                    alert("success");
+                else
+                    alert("false");
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="test"></div>
+<input type="button" id="check" value="check form" />
+</body>
+</html>

@@ -14,7 +14,7 @@
         ///<summary>
         /// kino.Form
         ///</summary>
-        ///<param name="s" type="Json">
+        ///<param name="s" type="[optional]Json">
         ///Json = {
         ///render:Dom,
         ///items:Array,
@@ -166,9 +166,35 @@
 
         if (render != null)
             this.render = render;
-        this.render.innerHTML = this.bodyhtml.replace("@{groups}", html.join(""));
+        this.render.innerHTML = this.bodyhtml.replace("@{groups}", html.join("")) + p.getErrorBoxHtml();
     }
 
+    p.getErrorBoxHtml = function () {
+        var html = new Array();
+        html.push("<div class='kf-error-box' style='display:none;'>")
+
+        html.push("<div class='kf-error-box-tl'>");
+        html.push("<div class='kf-error-box-tr'>");
+        html.push("<div class='kf-error-box-tc'>");
+        html.push("</div>");
+        html.push("</div>");
+        html.push("</div>");
+        html.push("<div class='kf-error-box-cl'>");
+        html.push("<div class='kf-error-box-cr'>");
+        html.push("<div class='kf-error-box-body'></div>");
+        html.push("</div>");
+        html.push("</div>");
+        html.push("<div class='kf-error-box-bl'>");
+        html.push("<div class='kf-error-box-br'>");
+        html.push("<div class='kf-error-box-bc'>");
+        html.push("</div>");
+        html.push("</div>");
+        html.push("</div>");
+
+        html.push("</div>");
+
+        return html.join("");
+    };
     p.isAddCell2Row = function (colnum, len, j, vcount) {
         return colnum == 1 || vcount % colnum == 0 || j == len - 1;
     };
@@ -179,7 +205,8 @@
             type = "msg";
         var requireStyle = " style='visibility:hidden' ";
 
-        if (item.required != undefined && item.required == true) {
+        if ((item.required != undefined && item.required == true)
+        || item.regex != null) {
             requireStyle = " style='visibility:visible' ";
             p.addVilidateEvent.call(this, item);
         }
@@ -191,27 +218,50 @@
                 .replace(/@{item}/g, p.itemHtml[type].getHtml.call(this, item));
     }
 
+    p.getErrorMsg = function (item) {
+        if (item.required && item.errorMsg == null)
+            return "必填项不能为空";
+        else if (item.regex != null && item.errorMsg == null)
+            return "格式不正确";
+
+        return item.errorMsg;
+    }
+
+
     p.addVilidateEvent = function (item) {
         if (item.type == undefined || item.name == undefined)
             return;
         var formObj = this;
+
         $(".kf-" + item.type + "-" + p.replaceSC(item.name)).live("blur", function () {
-            if (p.checkItem.call(formObj, item))
-                $(this).find("~.kf-alarm").css({ visibility: "hidden" })
+            if (p.checkItem.call(formObj, formObj.itemMap[p.getItemNameByDom(this)]))
+                $(this).find("~.kf-alarm").css({ visibility: "hidden" });
             else
-                $(this).find("~.kf-alarm").css({ visibility: "visible" })
+                $(this).find("~.kf-alarm").css({ visibility: "visible" });
         });
 
         $(".kf-" + item.type + "-" + p.replaceSC(item.name) + "~.kf-alarm").live({
-            mouseover: function () {
-                // this.style.visibility = "visible";
+            mouseenter: function () {
+                var eb = $(formObj.render).find(".kf-error-box");
+                
+                var ci = formObj.itemMap[p.getItemNameByDom($(this).prev()[0])];
+                eb.find(".kf-error-box-body").html(p.getErrorMsg(ci));
+                eb.css({
+                    position: "absolute",
+                    top: $(this).offset().top,
+                    left: $(this).offset().left - eb.width(),
+                    display:"block"
+                });
             },
-            mouseout: function () {
-                // this.style.visibility = "hidden";
+            mouseleave: function () {
+                $(formObj.render).find(".kf-error-box").css("display", "none");
             }
         });
     };
 
+    p.getItemNameByDom = function (dom) {
+        return /kf-[^\-\s]+-([^\s]+)/.exec(dom.className)[1];
+    };
 
     p.checkItem = function (item) {
         var val = p.itemHtml[item.type].getValue.call(this, item);
@@ -231,11 +281,14 @@
 
     f.prototype.check = function () {
         var allCheck = true;
-
-        for (var i = 0; i < this.groups.length; i++) {
-            var items = this.groups[i].items;
-            for (var j = 0; j < items.length; j++)
-                allCheck = p.checkItem.call(this, items[i]);
+        for (var i in this.itemMap) {
+            var item = this.itemMap[i];
+            var isCheck = p.checkItem.call(this, item);
+            allCheck = allCheck && isCheck;
+            if (!isCheck) {
+                $(this.render).find(".kf-" + item.type + "-" + p.replaceSC(item.name))
+                .find("~.kf-alarm").css({ visibility: "visible" });
+            }
         }
         return {
             isSuccess: allCheck

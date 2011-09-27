@@ -474,22 +474,77 @@ test("use regular expression to validate item value", function () {
     equal(result.isSuccess, true);
 });
 
-test("validate event test", function () {
+test("maxtrue varidate test", function () {
     var f = new kino.Form({
-        render: document.createElement("div"),
-        items: [{
-            name: "item1",
-            label: "名字",
-            type: "txt",
-            required: true
-        }]
-    });
-
-    f.bind();
-
-    $(f.render).find(".kf-txt-item1").trigger("blur");
-    equal($(f.render).find(".kf-txt-item1~.kf-alarm").css("visibility"), "visible");
+                render: document.createElement("div"),
+                items: [
+                    {
+                        name : "txt1",
+                        type : "txt",
+                        label : "文本",
+                        value : "测试文本",
+                    },
+                    {
+                        name: "txt2",
+                        type: "txt",
+                        label: "必填文本",
+                        required: true
+                    },
+                    {
+                        name: "list1",
+                        type: "list",
+                        label: "下拉列表",
+                        data:[
+                            {text:"请选择", value:""},
+                            {text:"v1", value:"v1"},
+                            {text:"v2", value:"v2"},
+                        ],
+                        required: true
+                    },
+                    {
+                        name: "txt2",
+                        type: "txt",
+                        label: "数字文本",
+                        regex:{
+                            rstr:"^\\d+$"
+                        }
+                    },
+                    {
+                        name: "date1",
+                        type: "date",
+                        label: "日期",
+                        value: -1
+                    },
+                ]
+            });
+        f.bind();
+        equal(f.check().isSuccess, false);
+        $(f.render).find(".kf-txt-txt1").val("ddd");
+        $(f.render).find(".kf-list-list1 option:nth-child(2)").attr("selected", true);
+        $(f.render).find(".kf-txt-txt2").val("123");
+        equal(f.check().isSuccess, true, "all check!");
 });
+
+
+//test("validate event test", function () {
+//    var f = new kino.Form({
+//        render: document.createElement("div"),
+//        items: [{
+//            name: "item1",
+//            label: "名字",
+//            type: "txt",
+//            required: true
+//        }]
+//    });
+
+//    f.bind();
+////    $(f.render).find(".kf-txt-item1").triggerHandler("blur");
+////    equal($(f.render).find(".kf-txt-item1~.kf-alarm").css("visibility"), "visible"); 
+//    equal($(f.render).find(".kf-error-box").length, 1);   
+//    equal($(f.render).find(".kf-error-box").css("display"), "none");
+//    $(f.render).find(".kf-txt-item1~.kf-alarm").trigger("mouseover");
+//    equal($(f.render).find(".kf-error-box").css("display"), "block");
+//});
 
 
 module("get parameters");
