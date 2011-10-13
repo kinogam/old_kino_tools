@@ -367,6 +367,7 @@ test("date type test", function () {
     equal($(f.render).find(".kf-date-datetime").attr("value"), "2010-01-01");
 });
 
+
 test("use Date Object for date type value", function () {
     var testDate = new Date("");
     testDate.setFullYear(2011);
@@ -424,6 +425,24 @@ test("password test", function () {
     f.bind();
     equal($(f.render).find(".kf-pwd-item1").length > 0, true);
 });
+
+//test("checkbox test", function(){
+//        var f = new kino.Form({
+//        render: document.createElement("div"),
+//        items: [{
+//            name: "item1",
+//            label: "名字",
+//            type: "checkbox",
+//            data:[
+//                {text:"txt1", value:"val1"},
+//                {text:"txt2", value:"val2"}
+//            ]
+//        }]
+//    });
+
+//    f.bind();
+//    equal($(f.render).find(".kf-checkbox-item1").length > 0, true);
+//});
 
 module("validate");
 
@@ -708,6 +727,16 @@ test("setValues test", function () {
             type: "txt"
         },
         {
+            name: "item3",
+            label: "名字3",
+            type: "date"
+        },
+        {
+            name: "item4",
+            label: "名字4",
+            type: "date"
+        },
+        {
             name: "item2",
             label: "名字2",
             type: "txt"
@@ -716,7 +745,9 @@ test("setValues test", function () {
     //use setValues before bind
     f.setValues({
         item1: "value1",
-        item2: "value2"
+        item2: "value2",
+        item3: null,
+        item4: ""
     });
 
     f.bind();
@@ -724,6 +755,8 @@ test("setValues test", function () {
     var json = f.getParams();
     equal(json.item1, "value1");
     equal(json.item2, "value2");
+    equal(json.item3, null);
+    equal(json.item4, "");
 });
 
 test("view mode test", function () {

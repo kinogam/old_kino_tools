@@ -1,6 +1,7 @@
 ﻿/*!
-* KStore JavaScript Library
+* kino.Store JavaScript Library
 * Copyright 2011, Kinogam
+* www.kinogam.com
 * Date: 2011-04-04
 */
 (function () {

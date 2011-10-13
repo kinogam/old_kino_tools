@@ -32,13 +32,18 @@
         if (s == null)
             return;
         if (s.items != null && s.items.length > 0) {
-            for (var i = 0; i < s.items.length; i++)
-                this.itemMap[s.items[i].name] = s.items[i];
+            for (var i = 0; i < s.items.length; i++) {
+                if (s.items != null && s.items[i] != null)
+                    this.itemMap[s.items[i].name] = s.items[i];
+            }
         }
         if (s.groups != null && s.groups.length > 0) {
-            for (var j = 0; j < s.groups.length; j++)
-                for (var i = 0; i < s.groups[j].items.length; i++)
-                    this.itemMap[s.groups[j].items[i].name] = s.groups[j].items[i];
+            for (var j = 0; j < s.groups.length; j++) {
+                for (var i = 0; i < s.groups[j].items.length; i++) {
+                    if (s.groups[j].items[i] != null && s.groups[j].items[i].name != null)
+                        this.itemMap[s.groups[j].items[i].name] = s.groups[j].items[i];
+                };
+            };
         }
     }
 
@@ -140,7 +145,7 @@
             var vcount = 0;
             for (var j = 0; j < items.length; j++) {
                 var item = items[j];
-                if (item.type != undefined) {
+                if (item != undefined && item.type != undefined) {
                     ch += p.getCellHtml.call(this, item);
                     vcount++;
                 }
@@ -243,14 +248,14 @@
         $(".kf-" + item.type + "-" + p.replaceSC(item.name) + "~.kf-alarm").live({
             mouseenter: function () {
                 var eb = $(formObj.render).find(".kf-error-box");
-                
+
                 var ci = formObj.itemMap[p.getItemNameByDom($(this).prev()[0])];
                 eb.find(".kf-error-box-body").html(p.getErrorMsg(ci));
                 eb.css({
                     position: "absolute",
                     top: $(this).offset().top,
                     left: $(this).offset().left - eb.width(),
-                    display:"block"
+                    display: "block"
                 });
             },
             mouseleave: function () {
@@ -472,7 +477,7 @@
                         html.push(DateHelper.date2String(value, defaultSF));
                     else if (p.isNumber(value))
                         html.push(DateHelper.getFormatDateByAddDay(value, defaultSF));
-                    else
+                    else if (value != "")
                         html.push(DateHelper.formatDateStr(value, defaultRF, defaultSF));
                     html.push("' ");
                 }
@@ -489,6 +494,7 @@
     p.replaceSC = function (value) {
         return value.replace(/\./g, "\\.");
     };
+
 
     p.isDateType = function (obj) {
         return Object.prototype.toString.call(obj) == "[object Date]";
