@@ -5,7 +5,7 @@ module('kino.Require');
 
 asyncTest("load one js file", function () {
     expect(1);
-    kino.Require("TestClass.js", function () {
+    kino.require("TestClass.js", function () {
         start();
         notEqual(window.TestClass, null);
     });
@@ -13,7 +13,7 @@ asyncTest("load one js file", function () {
 
 asyncTest("load multiple js files", function () {
     expect(2);
-    kino.Require(['TestClass.js', 'TestClass2.js'] , function () {
+    kino.require(['TestClass.js', 'TestClass2.js'] , function () {
         start();
         notEqual(window.TestClass, null);
         notEqual(window.TestClass2, null);
@@ -23,8 +23,8 @@ asyncTest("load multiple js files", function () {
 asyncTest("repetition load test", function () {
     expect(1);
     kino.resetLoadHash();
-    kino.Require({ 'TestClass': "TestClass.js" }, function () {
-        kino.Require({ 'TestClass': "TestClass.js" }, function () {
+    kino.require({ 'TestClass': "TestClass.js" }, function () {
+        kino.require({ 'TestClass': "TestClass.js" }, function () {
             start();
             equal(kino.rnum, 1);
         });
@@ -34,8 +34,8 @@ asyncTest("repetition load test", function () {
 asyncTest("repetition load with array argument", function () {
     expect(1);
     kino.resetLoadHash();
-    kino.Require([{ 'TestClass': "TestClass.js" }], function () {
-        kino.Require([{ 'TestClass': "TestClass.js" }], function () {
+    kino.require([{ 'TestClass': "TestClass.js" }], function () {
+        kino.require([{ 'TestClass': "TestClass.js" }], function () {
             start();
             equal(kino.rnum, 1);
         });

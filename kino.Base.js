@@ -130,7 +130,7 @@
         p.loadHash = {};
     };
 
-    k.Require = function (item, callback) {
+    k.require = function (item, callback) {
         ///<summary>
         ///动态加载
         ///</summary>
