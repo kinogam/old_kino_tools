@@ -25,6 +25,7 @@
         scriptBlock.parentNode.appendChild(newScript);
         newScript.onload = newScript.onreadystatechange = function () {
             k.rnum++;
+            scriptBlock.parentNode.removeChild(newScript);
             if (typeof (options.callback) !== "undefined" && typeof (options.callback) === "function")
                 options.callback.call();
         };
@@ -63,7 +64,7 @@
             }
             //匹配单文件模式
             else
-                return document.location.href.replace(/[^\/]+$/, url);
+                return currentScript.src.replace(/[^\/]+$/, url);
         }
     };
 
@@ -172,7 +173,7 @@
         ///<param name='className' type='String'>类名</param>
         ///<param name='construct' type='Function'>构造函数</param>
         ///<returns type='Class' />
-        
+
         var ns = className.split('.');
         var temp = window;
         for (var i = 0; i < ns.length; i++) {
