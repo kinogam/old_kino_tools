@@ -22,7 +22,8 @@
         var newScript = document.createElement("script");
         newScript.src = fullUrl;
         newScript.type = "text/javascript";
-        scriptBlock.parentNode.appendChild(newScript);
+        //scriptBlock.parentNode.appendChild(newScript);
+        scriptBlock.parentNode.insertBefore(newScript, scriptBlock);
         newScript.onload = newScript.onreadystatechange = function () {
             k.rnum++;
             scriptBlock.parentNode.removeChild(newScript);
@@ -62,9 +63,9 @@
                 return currentScript.src.replace(r, "") + filePath;
 
             }
-            //匹配单文件模式
+            //当前页面模式
             else
-                return currentScript.src.replace(/[^\/]+$/, url);
+                return document.location.href.replace(/[^\/]+$/, url);
         }
     };
 
