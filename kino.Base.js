@@ -138,7 +138,6 @@
         ///</summary>
         ///<param name='item' type='String|Json|Array'>加载项</param>
         ///<param name='callback' type='Function'>回调函数</param>
-        p.isRepMode = false;
         if (Object.prototype.toString.call(item) === '[object String]')
             p.aLoad({
                 url: item,
