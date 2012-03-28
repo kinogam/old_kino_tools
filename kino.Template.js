@@ -21,6 +21,7 @@
         ///<param name="value">
         ///模板变量值
         ///</param>
+        ///<returns type="kino.Template"/>
         if (arguments.length == 1 && typeof arguments[0] == 'object') {
             var json = arguments[0];
             for (var i in json)
@@ -28,14 +29,19 @@
         }
         else
             this.variableMap[variable] = value;
+        return this;
     }
 
-    t.prototype.evaluate = function () {
+    t.prototype.evaluate = function (isClean) {
         ///<summary>
         ///执行转换
         ///</summary>
+        ///<param name="isClean" type="Boolean">是否清空未匹配变量</param>
         ///<returns type="String"/>
-        var result = private.replaceVariables.call(this);
+        var result = private.replaceVariables.call({
+            template: this,
+            isClean: isClean
+        });
         return result;
     }
 
@@ -52,13 +58,20 @@
 
     var private = {
         replaceVariables: function () {
-            var segments = kino.TemplateParse.parse(this.templateText);
+            var template = this.template;
+            var isClean = this.isClean;
+            var segments = kino.TemplateParse.parse(template.templateText);
             for (var i = 0; i < segments.length; i++) {
                 if (/^\${[^}]+}$/.test(segments[i])) {
                     var variable = segments[i].replace(/^\${|}$/g, "");
-                    if (this.variableMap[variable] == null)
-                        throw new Error("a variable was left without a value!");
-                    segments[i] = this.variableMap[variable];
+                    if (template.variableMap[variable] == null) {
+                        if (isClean)
+                            segments[i] = "";
+                        else
+                            throw new Error("a variable was left without a value!");
+                    }
+                    else
+                        segments[i] = template.variableMap[variable];
                 }
             }
             return segments.join("");

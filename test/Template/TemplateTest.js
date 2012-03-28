@@ -24,6 +24,10 @@ test("missing value raises exception", function () {
     }, "a variable was left without a value!");
 });
 
+test("handle missing vlaue", function () {
+    equal(new kino.Template("Hello, ${name}").evaluate(true), "Hello, ");
+});
+
 test("variables value like ${...}", function () {
     template = new kino.Template("Hey, ${one}, ${two}, ${three}!");
     template.set("one", "${x1}");
