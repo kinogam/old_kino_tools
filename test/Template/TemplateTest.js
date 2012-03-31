@@ -6,8 +6,6 @@ test("replace test", function () {
     equal(str, "Hey, kino!");
 });
 
-
-
 test("multiple variables", function () {
     var str = kino.template("Hey, @a, @b, @c!", { a: 1, b: 2, c: 3 });
     equal(str, "Hey, 1, 2, 3!");
@@ -55,4 +53,12 @@ test("escape test", function () {
     var templateStr = "<input yyy='@test' xxx=\"@otherAttr\" />";
     var str = kino.template(templateStr, { test: "kino's test", otherAttr: "\"one more test\"" });
     equal(str, "<input yyy='kino&#x27;s test' xxx=\"&quot;one more test&quot;\" />");
+});
+
+test("array param test", function () {
+    var templateStr = "@for(var i = 0; i < data.length; i++){<span>@data[i]</span>}";
+    var str = kino.template(templateStr, {
+        data:[1, 2, 3]
+    });
+    equal(str, "<span>1</span><span>2</span><span>3</span>");
 });

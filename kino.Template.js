@@ -15,7 +15,7 @@
         ///<param name="data" type="Json">变量容器</param>
         ///<param name="isClean" type="[option]Boolean">是否清空未匹配变量</param>
         ///<returns type="String" />
-        var variable = new RegExp("@([a-zA-Z0-9\._]+)(?!\\()", "g");
+        var variable = new RegExp("@([a-zA-Z0-9\._\\[\\]]+)(?!\\()", "g");
         var block = new RegExp("@{([^}]+)}", "g");
         var logic = new RegExp("@(if|for|while)(\\([^\\)]+\\){)([^}]+)}", "g");
         var temp = "var $$p=[];with(json||{}){$$p.push('";
