@@ -1,74 +1,52 @@
 ﻿/// <reference path="Template.js" />
 /// <reference path="../qunit/qunit.js" />
 
-
-var template;
-
-
-module("Template", {
-    setup: function () {
-        template = new kino.Template("Hey, ${one}, ${two}, ${three}!");
-        template.set("one", "1");
-        template.set("two", "2");
-        template.set("three", "3"); 
-    }
+test("replace test", function () {
+    var str = kino.template("Hey, @name!", { name: 'kino' });
+    equal(str, "Hey, kino!");
 });
 
+
+
 test("multiple variables", function () {
-    equal(template.evaluate(), "Hey, 1, 2, 3!");
+    var str = kino.template("Hey, @a, @b, @c!", { a: 1, b: 2, c: 3 });
+    equal(str, "Hey, 1, 2, 3!");
 });
 
 test("missing value raises exception", function () {
     raises(function () {
-        new kino.Template("Hello, ${name}").evaluate();
+        var templateStr = "Hey, @xxx";
+        var str = kino.template(templateStr, {});
     }, "a variable was left without a value!");
 });
 
 test("handle missing vlaue", function () {
-    equal(new kino.Template("Hello, ${name}").evaluate(true), "Hello, ");
+    var templateStr = "Hey, @xxx";
+    var str = kino.template(templateStr, {}, true);
+    equal(str, "Hey, ");
 });
 
-test("variables value like ${...}", function () {
-    template = new kino.Template("Hey, ${one}, ${two}, ${three}!");
-    template.set("one", "${x1}");
-    template.set("two", "${three}");
-    template.set("three", "${x3}");
-    equal(template.evaluate(), "Hey, ${x1}, ${three}, ${x3}!");
+test("variables value like @abc", function () {
+    var str = kino.template("Hey, @a, @b, @c!", { a: "@b", b: "@c", c: "@a" });
+    equal(str, "Hey, @b, @c, @a!");
 });
 
-test("set variables with json", function () {
-    template = new kino.Template("Hey, ${one}, ${two}, ${three}!");
-    template.set({
-        "one": "${x1}",
-        "two": "${three}",
-        "three": "${x3}"
-    });
-    equal(template.evaluate(), "Hey, ${x1}, ${three}, ${x3}!");
+test("javascript block test", function () {
+    var templateStr = "@{var name='kino';}this is @name";
+    var str = kino.template(templateStr);
+    equal(str, "this is kino");
 });
 
-module("Parse");
+test("@if @for @while test", function () {
+    var templateStr = "@if(1==0){<span>if you see this word,your test is fail</span>}";
+    var str = kino.template(templateStr);
+    equal(str, "");
 
-test("parsing empty string", function () {
-    var segments = kino.TemplateParse.parse("");
-    equal(segments.length, 1);
+    templateStr = "@for(var i = 0; i < 3; i++){<span>@i</span>}";
+    str = kino.template(templateStr);
+    equal(str, "<span>0</span><span>1</span><span>2</span>");
+
+    templateStr = "@{var i = 3;}@while(i--){<span>@i</span>}";
+    str = kino.template(templateStr);
+    equal(str, "<span>2</span><span>1</span><span>0</span>");
 });
-
-test("parsing plain text", function () {
-    var segments = kino.TemplateParse.parse("a plain text test");
-    equal(segments.length, 1);
-    equal(segments[0], "a plain text test");
-});
-
-test("parsing variables", function () {
-    var segments = kino.TemplateParse.parse("Hey, ${one}, ${two}, ${three}!");
-    equal(segments.length, 7);
-    equal(segments[0], "Hey, ");
-    equal(segments[1], "${one}");
-    equal(segments[2], ", ");
-    equal(segments[3], "${two}");
-    equal(segments[4], ", ");
-    equal(segments[5], "${three}");
-    equal(segments[6], "!");
-});
-
-
