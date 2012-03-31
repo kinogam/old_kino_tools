@@ -8,7 +8,7 @@
     var _unescape = function (code) {
         return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
     };
-    var t = this.kino.template = function (templateStr, data, isCleanMode) {
+    var t = function (templateStr, data, isCleanMode) {
         ///<summary>
         ///kino模板工具
         ///</summary>
@@ -41,5 +41,14 @@
         var func = new Function('_escape', 'json', temp);
         return func.call(null, _escape, data);
     };
+
+    // Module
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = t;
+    }
+    else {
+        this.kino = this.kino ? this.kino : {};
+        this.kino.template = t;
+    }
 })();
 
