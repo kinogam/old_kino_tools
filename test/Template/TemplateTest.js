@@ -50,3 +50,9 @@ test("@if @for @while test", function () {
     str = kino.template(templateStr);
     equal(str, "<span>2</span><span>1</span><span>0</span>");
 });
+
+test("escape test", function () {
+    var templateStr = "<input yyy='@test' xxx=\"@otherAttr\" />";
+    var str = kino.template(templateStr, { test: "kino's test", otherAttr: "\"one more test\"" });
+    equal(str, "<input yyy='kino&#x27;s test' xxx=\"&quot;one more test&quot;\" />");
+});
