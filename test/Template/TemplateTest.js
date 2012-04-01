@@ -1,4 +1,5 @@
-﻿/// <reference path="Template.js" />
+﻿/// <reference path="../../kino.Template.js" />
+
 /// <reference path="../qunit/qunit.js" />
 
 test("replace test", function () {
@@ -21,7 +22,7 @@ test("missing value raises exception", function () {
 test("handle missing vlaue", function () {
     var templateStr = "Hey, @xxx";
     var str = kino.template(templateStr, {}, {
-        isCleanMode: true
+        enableCleanMode: true
     });
     equal(str, "Hey, ");
 });
@@ -64,3 +65,11 @@ test("array param test", function () {
     });
     equal(str, "<span>1</span><span>2</span><span>3</span>");
 });
+
+test("do not escape", function () {
+    var templateStr = "<input @attr />";
+    var str = kino.template(templateStr, { attr: "style='display:none'" }, {
+        enableEscape: false
+    });
+    equal(str, "<input style='display:none' />");
+})

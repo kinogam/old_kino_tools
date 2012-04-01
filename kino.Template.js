@@ -13,7 +13,11 @@
         ///</summary>
         ///<param name="templateStr" type="String">模板字符串</param>
         ///<param name="data" type="Json">变量容器</param>
-        ///<param name="isCleanMode" type="[option]Boolean">是否清空未匹配变量</param>
+        ///<param name="setting" type="Json">
+        ///[option]可选设置
+        ///&#10;1.enableCleanMode type="Boolean" 设置是否清空未匹配变量
+        ///&#10;2.enableEscape type="Boolean" 设置是否使用字符转换
+        ///</param>
         ///<returns type="String" />
         var variable = new RegExp("@([a-zA-Z0-9\._\\[\\]]+)(?!\\()", "g");
         var block = new RegExp("@{([^}]+)}", "g");
@@ -26,9 +30,13 @@
              return "'); " + $0 + $1 + " $$p.push('" + $2 + "');};$$p.push('";
          }).replace(variable, function (match, code) {
              var str = "');";
-             if (typeof setting !== 'undefined' && setting.isCleanMode === true)
+             if (typeof setting !== 'undefined' && setting.enableCleanMode === true)
                  str = str + "if(typeof " + code + " === 'undefined')" + code + "='';";
-             return str + "$$p.push(_escape(" + code + "));$$p.push('";
+             if (typeof setting !== 'undefined' && setting.enableEscape === false)
+                 str = str + "$$p.push(" + code + ");$$p.push('";
+             else
+                 str = str + "$$p.push(_escape(" + code + "));$$p.push('";
+             return str;
          })
         .replace(block, function (match, code) {
             return "'); " + _unescape(code) + " $$p.push('";
@@ -50,4 +58,3 @@
         this.kino.template = t;
     }
 })();
-
