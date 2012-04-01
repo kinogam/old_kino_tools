@@ -20,7 +20,9 @@ test("missing value raises exception", function () {
 
 test("handle missing vlaue", function () {
     var templateStr = "Hey, @xxx";
-    var str = kino.template(templateStr, {}, true);
+    var str = kino.template(templateStr, {}, {
+        isCleanMode: true
+    });
     equal(str, "Hey, ");
 });
 

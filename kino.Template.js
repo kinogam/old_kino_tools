@@ -7,13 +7,13 @@
     var _unescape = function (code) {
         return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
     };
-    var t = function (templateStr, data, isCleanMode) {
+    var t = function (templateStr, data, setting) {
         ///<summary>
         ///kino模板工具
         ///</summary>
         ///<param name="templateStr" type="String">模板字符串</param>
         ///<param name="data" type="Json">变量容器</param>
-        ///<param name="isClean" type="[option]Boolean">是否清空未匹配变量</param>
+        ///<param name="isCleanMode" type="[option]Boolean">是否清空未匹配变量</param>
         ///<returns type="String" />
         var variable = new RegExp("@([a-zA-Z0-9\._\\[\\]]+)(?!\\()", "g");
         var block = new RegExp("@{([^}]+)}", "g");
@@ -26,7 +26,7 @@
              return "'); " + $0 + $1 + " $$p.push('" + $2 + "');};$$p.push('";
          }).replace(variable, function (match, code) {
              var str = "');";
-             if (isCleanMode)
+             if (typeof setting !== 'undefined' && setting.isCleanMode === true)
                  str = str + "if(typeof " + code + " === 'undefined')" + code + "='';";
              return str + "$$p.push(_escape(" + code + "));$$p.push('";
          })
