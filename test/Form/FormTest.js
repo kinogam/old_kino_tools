@@ -249,7 +249,23 @@ test("pure array data test", function () {
     f.bind();
 
     notEqual(f.render.innerHTML, null);
-    equal(f.get("list1").$el.length, 1);
+    equal(f.get("list1").$el.val(), "1");
+});
+
+test("use filed 'text' and 'value' for default filedname", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "list",
+        name: "list1",
+        label: "下拉列表",
+        data: [{ value: "1", text: "2" }, {value:"a1", text:"b2"}]
+    });
+
+    f.bind();
+
+    notEqual(f.render.innerHTML, null);
+    equal(f.get("list1").$el.val(), "1");
 });
 
 //test("ajax list bind test", function () {
