@@ -350,8 +350,7 @@ test("use filed 'text' and 'value' for default filedname", function () {
 //    f.bind();
 
 //    notEqual(f.render.innerHTML, null);
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx22");
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx32");
+//    equal(f.get("list1").$el.val(), "bx22");
 //});
 
 //test("set default selected value", function () {
@@ -795,29 +794,80 @@ test("view mode test", function () {
     equal(f.get('item1').$el.length > 0, true);
 });
 
-//module("event");
+module("event");
 
-//test("event test", function () {
-//    var f = new kino.Form({
-//        render: document.createElement("div"),
-//        items: [{
-//            name: "flightType",
-//            label: "航程类型：",
-//            type: "list",
-//            data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
-//            dataField: "value",
-//            textField: "text"
-//        },
-//                {
-//                    name: "startCity",
-//                    label: "出发城市：",
-//                    type: "txt"
-//                }]
-//    });
-//    f.bind();
-//});
+test("event test", function () {
+    var f = new kino.Form({
+        render: document.createElement("div"),
+        items: [{
+            name: "flightType",
+            label: "航程类型：",
+            type: "list",
+            data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
+            event: {
+                change: function (e, form) {
+                    form.get("startCity").$el.val("hello event");
+                }
+            }
+        },
+        {
+            name: "startCity",
+            label: "出发城市：",
+            type: "txt"
+        }]
+    });
+    f.bind();
 
+    f.get("flightType").$el.trigger("change");
+    equal(f.get("startCity").$el.val(), "hello event");
+});
 
+test("remove item type", function () {
+    kino.Item.addType({
+        type: 'temptype',
+        extend: 'txt'
+    });
+    kino.Item.removeType("temptype");
+    equal(kino.Item.getType('temptype'), undefined);
+});
+
+test("extend test", function () {
+    kino.Item.addType({
+        type: 'newtype',
+        extend: 'txt'
+    });
+
+    var f = new kino.Form();
+    f.addItem({
+        type: 'newtype',
+        name: 'nt1',
+        value: 'xxx'
+    });
+
+    f.bind(document.createElement("div"));
+    equal(f.get('nt1').el.tagName.toLowerCase(), 'input');
+    equal(f.get('nt1').$el.val(), 'xxx');
+    kino.Item.removeType("newtype");
+});
+
+test("use 'after' method to set item after binding", function () {
+    kino.Item.addType({
+        type: 'newtype',
+        extend: 'txt',
+        after: function (item) {
+            item.$el.val('helloworld');
+        }
+    });
+
+    var f = new kino.Form();
+    f.addItem({
+        type: 'newtype',
+        name: 'nt1'
+    })
+    f.bind(document.createElement("div"));
+    equal(f.get('nt1').$el.val(), 'helloworld');
+    kino.Item.removeType("newtype");
+});
 
 
 
