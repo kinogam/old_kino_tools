@@ -19,34 +19,35 @@
         ///&#10;2.enableEscape type="Boolean" 设置是否使用字符转换
         ///</param>
         ///<returns type="String" />
-        var variable = new RegExp("@([a-zA-Z0-9\._\\[\\]]+)(?!\\()", "g");
-        var block = new RegExp("@{([^}]+)}", "g");
-        var logic = new RegExp("@(if|for|while)(\\([^\\)]+\\){)([^}]+)}", "g");
-        var temp = "var $$p=[];with(json||{}){$$p.push('";
-        temp = temp + templateStr
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-         .replace(logic, function (match, $0, $1, $2) {
-             return "'); " + $0 + $1 + " $$p.push('" + $2 + "');};$$p.push('";
-         }).replace(variable, function (match, code) {
-             var str = "');";
-             if (typeof setting !== 'undefined' && setting.enableCleanMode === true)
-                 str = str + "if(typeof " + code + " === 'undefined')" + code + "='';";
-             if (typeof setting !== 'undefined' && setting.enableEscape === false)
-                 str = str + "$$p.push(" + code + ");$$p.push('";
-             else
-                 str = str + "$$p.push(_escape(" + code + "));$$p.push('";
-             return str;
-         })
-        .replace(block, function (match, code) {
-            return "'); " + _unescape(code) + " $$p.push('";
-        })
-        .replace(/\r/g, '\\r')
-        .replace(/\n/g, '\\n')
-        .replace(/\t/g, '\\t');
-        temp = temp + "');}; return $$p.join('');";
-        var func = new Function('_escape', 'json', temp);
-        return func.call(null, _escape, data);
+        var logic = /@((?:if|for|while)\s*\([^\)]+\)\s*{)/g;
+        var block = /@{([^}]*)}/g;
+        var variable = /@([a-zA-Z0-9\.\[\]\(\)]+)/g;
+        var s = "var __p='';with(obj||{}){__p=__p+'" + templateStr.replace(/\r/g, '\\r')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/\n/g, '\\n')
+            .replace(/\t/g, '\\t')
+            .replace(block, function (match, $1) {
+                return "';" + _unescape($1) + "__p=__p+'";
+            })
+            .replace(logic, function (match, $1) {
+                return "';" + _unescape($1) + "__p=__p+'";
+            })
+            .replace(variable, function (match, $1) {
+                var str = "';";
+                if (typeof setting !== 'undefined' && setting.enableCleanMode === true)
+                    str = str + "if(typeof " + $1 + " === 'undefined')" + $1 + "='';";
+                if (typeof setting !== 'undefined' && setting.enableEscape === false)
+                    str = str + "__p=__p+" + $1 + ";__p=__p+'";
+                else
+                    str = str + "__p=__p+_escape(" + $1 + ");__p=__p+'";
+                return str;
+            })
+            .replace(/}/g, "';}__p=__p+'")
+             + "';};return __p;";
+
+            var func = new Function('_escape', 'obj', s);
+            return func.call(null, _escape, data);
     };
 
     // Module
