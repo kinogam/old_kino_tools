@@ -369,8 +369,7 @@ test("Given selectedIndex Then the equal index option Should be selected", funct
 //    f.bind();
 
 //    notEqual(f.render.innerHTML, null);
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx2");
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx3");
+//    equal(f.get('list1').$el.val(), "bx2");
 //});
 
 
@@ -752,12 +751,18 @@ test("setValues test", function () {
             name: "item2",
             label: "名字2",
             type: "txt"
-        }]
+        },
+        {
+            name: "hide1",
+            value: 'hdvalue'
+        }
+        ]
     });
     //use setValues before bind
     f.setValues({
         item1: "value1",
-        item2: "value2"
+        item2: "value2",
+        hide1: "new hd value"
     });
 
     f.bind();
@@ -765,6 +770,7 @@ test("setValues test", function () {
     var json = f.getParams();
     equal(json.item1, "value1");
     equal(json.item2, "value2");
+    equal(json.hide1, "new hd value");
 });
 
 test("view mode test", function () {

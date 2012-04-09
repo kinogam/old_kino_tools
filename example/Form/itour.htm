@@ -52,6 +52,10 @@
                     }
                 },
                 {
+                    name: 'hide1',
+                    value: 'hidevalue'
+                },
+                {
                     name: "startCity",
                     label: "出发城市：",
                     type: "citySelector"
@@ -71,7 +75,11 @@
             f.bind();
 
             $("#check").on("click", function () {
+                f.setValues({
+                    'hide1': 'new hide value'
+                });
                 var param = f.getParams();
+                
                 var str = "{";
                 for (var i in param) {
                     str += "'" + i + "' : '" + param[i] + "', ";

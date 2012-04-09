@@ -122,7 +122,8 @@
     }
 
     f.prototype.setValues = function (s) {
-        this.initValues = s;
+        for (var i in s) 
+            this.itemMap[i].value = s[i];
     };
 
     f.prototype.enableViewMode = function () {
