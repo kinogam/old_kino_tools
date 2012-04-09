@@ -7,18 +7,18 @@
     var _unescape = function (code) {
         return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
     };
-    var t = function (templateStr, data, setting) {
+
+    var gf = function (templateStr, setting) {
         ///<summary>
-        ///kino模板工具
+        ///获取模板函数
         ///</summary>
         ///<param name="templateStr" type="String">模板字符串</param>
-        ///<param name="data" type="Json">变量容器</param>
         ///<param name="setting" type="Json">
         ///[option]可选设置
         ///&#10;1.enableCleanMode type="Boolean" 设置是否清空未匹配变量
         ///&#10;2.enableEscape type="Boolean" 设置是否使用字符转换
         ///</param>
-        ///<returns type="String" />
+        ///<returns type="Function" />
         var logic = /@((?:if|for|while)\s*\([^\)]+\)\s*{)/g;
         var block = /@{([^}]*)}/g;
         var variable = /@([a-zA-Z0-9\.\[\]\(\)]+)/g;
@@ -50,16 +50,41 @@
             .replace(/%\$a\$%/g, '@')
              + "';};return __p;";
 
-            var func = new Function('_escape', 'obj', s);
-            return func.call(null, _escape, data);
+        return new Function('_escape', 'obj', s);
     };
+
+    var t = function (temp, data, setting) {
+        ///<summary>
+        ///kino模板工具
+        ///</summary>
+        ///<param name="templateStr" type="String">模板字符串</param>
+        ///<param name="data" type="Json">变量容器</param>
+        ///<param name="setting" type="Json">
+        ///[option]可选设置
+        ///&#10;1.enableCleanMode type="Boolean" 设置是否清空未匹配变量
+        ///&#10;2.enableEscape type="Boolean" 设置是否使用字符转换
+        ///</param>
+        ///<returns type="String" />
+
+        var func;
+        if (typeof temp === 'function')
+            func = temp;
+        else
+            func = gf(temp, setting);
+        return func.call(null, _escape, data);
+    };
+
 
     // Module
     if (typeof module != 'undefined' && module.exports) {
-        module.exports = t;
+        module.exports = {
+            template: t,
+            getTemplateFunc: gf
+        };
     }
     else {
         this.kino = this.kino ? this.kino : {};
         this.kino.template = t;
+        this.kino.getTemplateFunc = gf;
     }
 })();

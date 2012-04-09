@@ -98,6 +98,12 @@ test("Given '@@' and '@}' then it should out put '@' and '}' character", functio
 });
 
 test("getTemplateFunc() should return a template function", function () {
-    var templateFunc = kino.getTemplateFunc("helly!@name");
+    var templateFunc = kino.getTemplateFunc("hello!@name");
     equal(typeof templateFunc, 'function');
+});
+
+test("Given a template function to kino.template() then it should return a convented string", function () {
+    var tf = kino.getTemplateFunc("hello!@name");
+    var str = kino.template(tf, { name: 'kino' });
+    equal(str, 'hello!kino');
 });
