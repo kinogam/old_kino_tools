@@ -334,45 +334,43 @@ test("use filed 'text' and 'value' for default filedname", function () {
 
 
 
-//test("set default selected index", function () {
-//    var f = new kino.Form();
-//    f.renderTo(document.createElement("div"));
-//    f.addItem({
-//        type: "list",
-//        name: "list1",
-//        label: "下拉列表",
-//        data: [{ ax: "a11", value: "b22", text: "c33" },
-//        { ax: "a1", value: "bx2", text: "cx3" },
-//        { ax: "a12", value: "bx22", text: "cx32"}],
-//        selectedIndex: 2
-//    });
+test("Given selectedIndex Then the equal index option Should be selected", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "list",
+        name: "list1",
+        label: "下拉列表",
+        data: [{ ax: "a11", value: "b22", text: "c33" },
+        { ax: "a1", value: "bx2", text: "cx3" },
+        { ax: "a12", value: "bx22", text: "cx32"}],
+        selectedIndex: 2
+    });
 
-//    f.bind();
+    f.bind();
 
-//    notEqual(f.render.innerHTML, null);
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx22");
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx32");
-//});
+    notEqual(f.render.innerHTML, null);
+    equal(f.get("list1").$el.val(), "bx22");
+});
 
-//test("set default selected value", function () {
-//    var f = new kino.Form();
-//    f.renderTo(document.createElement("div"));
-//    f.addItem({
-//        type: "list",
-//        name: "list1",
-//        label: "下拉列表",
-//        data: [{ ax: "a11", value: "b22", text: "c33" },
-//        { ax: "a1", value: "bx2", text: "cx3" },
-//        { ax: "a12", value: "bx22", text: "cx32"}],
-//        selectedValue: "bx2"
-//    });
+test("Given selectedValue Then the equal value option Should be selected", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "list",
+        name: "list1",
+        label: "下拉列表",
+        data: [{ ax: "a11", value: "b22", text: "c33" },
+        { ax: "a1", value: "bx2", text: "cx3" },
+        { ax: "a12", value: "bx22", text: "cx32"}],
+        selectedValue: "bx2"
+    });
 
-//    f.bind();
+    f.bind();
 
-//    notEqual(f.render.innerHTML, null);
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].value, "bx2");
-//    equal($(f.render).find(".kf-list-list1 option:selected")[0].innerHTML, "cx3");
-//});
+    notEqual(f.render.innerHTML, null);
+    equal(f.get('list1').$el.val(), "bx2");
+});
 
 
 //test("date type test", function () {
@@ -753,12 +751,18 @@ test("setValues test", function () {
             name: "item2",
             label: "名字2",
             type: "txt"
-        }]
+        },
+        {
+            name: "hide1",
+            value: 'hdvalue'
+        }
+        ]
     });
     //use setValues before bind
     f.setValues({
         item1: "value1",
-        item2: "value2"
+        item2: "value2",
+        hide1: "new hd value"
     });
 
     f.bind();
@@ -766,6 +770,7 @@ test("setValues test", function () {
     var json = f.getParams();
     equal(json.item1, "value1");
     equal(json.item2, "value2");
+    equal(json.hide1, "new hd value");
 });
 
 test("view mode test", function () {
@@ -795,29 +800,80 @@ test("view mode test", function () {
     equal(f.get('item1').$el.length > 0, true);
 });
 
-//module("event");
+module("event");
 
-//test("event test", function () {
-//    var f = new kino.Form({
-//        render: document.createElement("div"),
-//        items: [{
-//            name: "flightType",
-//            label: "航程类型：",
-//            type: "list",
-//            data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
-//            dataField: "value",
-//            textField: "text"
-//        },
-//                {
-//                    name: "startCity",
-//                    label: "出发城市：",
-//                    type: "txt"
-//                }]
-//    });
-//    f.bind();
-//});
+test("event test", function () {
+    var f = new kino.Form({
+        render: document.createElement("div"),
+        items: [{
+            name: "flightType",
+            label: "航程类型：",
+            type: "list",
+            data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
+            event: {
+                change: function (e, form) {
+                    form.get("startCity").$el.val("hello event");
+                }
+            }
+        },
+        {
+            name: "startCity",
+            label: "出发城市：",
+            type: "txt"
+        }]
+    });
+    f.bind();
 
+    f.get("flightType").$el.trigger("change");
+    equal(f.get("startCity").$el.val(), "hello event");
+});
 
+test("remove item type", function () {
+    kino.Item.addType({
+        type: 'temptype',
+        extend: 'txt'
+    });
+    kino.Item.removeType("temptype");
+    equal(kino.Item.getType('temptype'), undefined);
+});
+
+test("extend test", function () {
+    kino.Item.addType({
+        type: 'newtype',
+        extend: 'txt'
+    });
+
+    var f = new kino.Form();
+    f.addItem({
+        type: 'newtype',
+        name: 'nt1',
+        value: 'xxx'
+    });
+
+    f.bind(document.createElement("div"));
+    equal(f.get('nt1').el.tagName.toLowerCase(), 'input');
+    equal(f.get('nt1').$el.val(), 'xxx');
+    kino.Item.removeType("newtype");
+});
+
+test("use 'after' method to set item after binding", function () {
+    kino.Item.addType({
+        type: 'newtype',
+        extend: 'txt',
+        after: function (item) {
+            item.$el.val('helloworld');
+        }
+    });
+
+    var f = new kino.Form();
+    f.addItem({
+        type: 'newtype',
+        name: 'nt1'
+    })
+    f.bind(document.createElement("div"));
+    equal(f.get('nt1').$el.val(), 'helloworld');
+    kino.Item.removeType("newtype");
+});
 
 
 

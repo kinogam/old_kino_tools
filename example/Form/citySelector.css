@@ -1,0 +1,16 @@
+﻿.address_hot li,
+.address_hot_abb,
+.address_hot_adress { list-style:none; margin:0; padding:0 }
+.address_hot_adress a { text-decoration:none }
+.address_hot { background-color: #FFFFFF; font-size: 12px; width: 283px; z-index:9999 }
+.address_hotcity { background-color: #67A1E2; border-color: #2C7ECF; border-style: solid; border-width: 1px 1px 0; color: #CEE3FC; height: 24px; line-height: 24px; padding-left: 10px; }
+.address_hotcity strong { color: #FFFFFF; }
+.address_hotlist { border-color: #999999; border-style: solid; border-width: 0 1px 1px; overflow: hidden; padding: 5px; }
+.address_hot_abb { border-bottom: 1px solid #5DA9E2; padding-bottom: 20px; }
+.address_hot_abb li { color: #005DAA; cursor: pointer; float: left; height: 20px; line-height: 20px; list-style-type: none; text-align: center; }
+.address_hot_abb li span { padding:0 8px; }
+.address_hot_abb li .hot_selected { display:block; padding:0 7px; background-color: #FFFFFF; border-color: #5DA9E2; border-style: solid; border-width: 1px 1px 0; color: #000000; font-weight: bold; }
+.address_hot_adress { padding-top: 4px; width: 100%; }
+.address_hot_adress li { float: left; height: 24px; overflow: hidden; width: 67px; }
+.address_hot_adress li a { border: 1px solid #FFFFFF; color: #000000; display: block; height: 22px; line-height: 22px; padding-left: 5px; }
+.address_hot_adress li a:hover { background-color: #E8F4FF; border: 1px solid #ACCCEF; text-decoration: none; }

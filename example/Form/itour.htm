@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="citySelector.css" rel="stylesheet" type="text/css" />
+    <link href="jquery.datepicker.css" rel="stylesheet" type="text/css" />
+    <script src="../../jquery.js" type="text/javascript"></script>
+    <script src="jquery-datepicker.min.js" type="text/javascript"></script>
+    <script src="jquery.datepicker-zh-CN.js" type="text/javascript"></script>
+    <script src="jquery.autocomplete.js" type="text/javascript"></script>
+    <script src="jquery.bgiframe.js" type="text/javascript"></script>
+    <script src="common.js" type="text/javascript"></script>
+    <script src="flightCitys.js" type="text/javascript"></script>
+    <script src="iflightCitys.js" type="text/javascript"></script>
+    <script src="iflightAbroadCitys.js" type="text/javascript"></script>
+    <script src="iFlightCitySelector.js" type="text/javascript"></script>
+    <script src="../../kino.Template.js" type="text/javascript"></script>
+    <script src="../../kino.Form.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        kino.Item.addType({
+            type: 'citySelector',
+            extend: 'txt',
+            after: function (item) {
+                item.$el.Watermark('中文/拼音').autocomplete().citySelector();
+            },
+            getValue: function () {
+                var $el = this.form.get(this.item.name).$el;
+                if ($el.val() == '中文/拼音')
+                    return "";
+                return $el.val();
+            }
+        }).addType({
+            type: 'datapicker',
+            extend: 'txt',
+            after: function (item) {
+                item.$el.datepicker({ numberOfMonths: 2, showAnim: '', prevText: "", nextText: "", minDate: new Date(), constrainInput: true });
+                item.$el.attr("readonly", true);
+            }
+        });
+
+        $(function () {
+            var f = new kino.Form({
+                render: $("#test")[0],
+                items: [{
+                    name: "flightType",
+                    label: "航程类型：",
+                    type: "list",
+                    data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
+                    event: {
+                        change: function (e, form) {
+                        }
+                    }
+                },
+                {
+                    name: 'hide1',
+                    value: 'hidevalue'
+                },
+                {
+                    name: "startCity",
+                    label: "出发城市：",
+                    type: "citySelector"
+                },
+                {
+                    name: "dstCity",
+                    label: "到达城市：",
+                    type: "citySelector"
+                },
+                {
+                    name: "startDate",
+                    label: "出发日期：",
+                    type: "datapicker"
+                }
+                ]
+            });
+            f.bind();
+
+            $("#check").on("click", function () {
+                f.setValues({
+                    'hide1': 'new hide value'
+                });
+                var param = f.getParams();
+                
+                var str = "{";
+                for (var i in param) {
+                    str += "'" + i + "' : '" + param[i] + "', ";
+                }
+                str = str.replace(/,\s$/, '}')
+                $("#result").html(str);
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+    <div id="test">
+    </div>
+    <input type="button" value="checkparam" id="check" />
+    <div id="result"></div>
+</body>
+</html>

@@ -19,16 +19,36 @@
 
     var fi = {
         _itemTypeHash: {},
+        _itemTemplateHash: {},
         addType: function (s) {
             ///<summary>
             ///添加控件类型
             ///</summary>
             ///<param name="s" type="Json">控件属性</param>
+
+            if (typeof s.extend !== 'undefined') {
+                var extend = this._itemTypeHash[s.extend];
+                for (var i in extend)
+                    if (typeof s[i] === 'undefined')
+                        s[i] = extend[i];
+            }
             //check if the new type implement getValue and getHtml method
             if (typeof s.getValue === "undefined" || typeof s.getHtml === "undefined")
                 throw new Error("not yet emplement getValue or getHtml method");
             this._itemTypeHash[s.type] = s;
             return this;
+        },
+        removeType: function (typeName) {
+            delete this._itemTypeHash[typeName];
+        },
+        getType: function (typeName) {
+            return this._itemTypeHash[typeName];
+        },
+        setTempFunc: function (typeName, templateFunc) {
+            return this._itemTemplateHash[typeName] = templateFunc;
+        },
+        getTempFunc: function (typeName) {
+            return this._itemTemplateHash[typeName];
         }
     };
 
@@ -53,6 +73,7 @@
         ///</summary>
         this.render = null;
         this.items = new Array();
+        this.afterList = new Array();
         this.groups = new Array();
         this.initValues = {};
         this.itemMap = {};
@@ -77,10 +98,22 @@
         ///增加表单元素
         ///</summary>
         ///<param name="item" type="json">表单元素</param>
+        var that = this;
 
-        //初始化item
-        if (typeof item.type !== 'undefined' && typeof fi._itemTypeHash[item.type].init === 'function')
-            fi._itemTypeHash[item.type].init.call(item);
+
+        if (typeof item.type !== 'undefined') {
+            var itemType = fi.getType(item.type);
+            //初始化item
+            if (typeof itemType.init === 'function')
+                itemType.init.call(item);
+
+            //添加到绑定后触发队列
+            if (typeof itemType.after === 'function')
+                this.afterList.push(function () {
+                    var _item = this.get(item.name);
+                    itemType.after.call(this, _item);
+                });
+        }
 
         var len = this.groups.length;
         if (len != 0 && this.groups[len - 1].name == "")
@@ -96,7 +129,8 @@
     }
 
     f.prototype.setValues = function (s) {
-        this.initValues = s;
+        for (var i in s)
+            this.itemMap[i].value = s[i];
     };
 
     f.prototype.enableViewMode = function () {
@@ -129,18 +163,36 @@
     })();
 
     f.prototype.bind = function (render) {
+        var that = this;
         this.render = render || this.render;
 
         var itemList = new Array();
-        for (var item in this.itemMap) {
-            if (typeof this.itemMap[item].type !== 'undefined')
+        for (var itemName in this.itemMap) {
+            var item = this.itemMap[itemName];
+
+            //判断类型来决定是否生成UI
+            if (typeof item.type !== 'undefined')
                 itemList[itemList.length] = {
-                    obj: this.itemMap[item],
-                    html: p.getCellHtml.call(this, this.itemMap[item])
+                    obj: item,
+                    html: p.getCellHtml.call(this, item)
                 }
+
+            //监听事件
+            if (typeof item.event !== 'undefined') {
+                for (var itemEvent in item.event) {
+                    var currentEvent = item.event[itemEvent];
+                    $(this.render).on(itemEvent, "[name='" + item.name + "']", function (e) {
+                        currentEvent.call(this, e, that);
+                    });
+                }
+            }
         }
         var html = kino.template(f.templateStr, { items: itemList }, { enableCleanMode: true, enableEscape: false });
         this.render.innerHTML = html;
+
+        //处理after列表
+        for (var i = 0; i < this.afterList.length; i++)
+            this.afterList[i].call(this);
     };
 
     f.prototype.get = function (name) {
@@ -159,7 +211,7 @@
 
     p.getCellHtml = function (item) {
         //获取模板文本
-        var templateText = fi._itemTypeHash[item.type].getHtml();
+        var templateText = fi.getType(item.type).getHtml();
 
         if (typeof this.initValues[item.name] !== 'undefined')
             item.value = this.initValues[item.name];
@@ -179,10 +231,14 @@
         };
         _item.attr = attrStr;
 
-        return kino.template(templateText, _item, {
-            enableCleanMode: true,
-            enableEscape: false
-        });
+        //判断模板函数是否生成，是则获取并使用，否则就创建一个并缓存起来
+        var tempFunc = fi.getTempFunc(item.type);
+        if (tempFunc == null)
+            tempFunc = fi.setTempFunc(item.type, kino.getTemplateFunc(templateText, {
+                enableCleanMode: true,
+                enableEscape: false
+            }));
+        return kino.template(tempFunc, _item);
     };
 
     p.isAddCell2Row = function (colnum, len, j, vcount) {
@@ -222,7 +278,7 @@
                         json[mn + items[j].name] = items[j].value;
                 }
                 else {
-                    var itemType = fi._itemTypeHash[items[j].type];
+                    var itemType = fi.getType(items[j].type);
                     json[mn + items[j].name] = itemType.getValue.call({ form: this, item: items[j] });
                 }
             }
@@ -263,7 +319,11 @@
             }
         },
         getHtml: function () {
-            return "<select name='@name' @attr>@for(var i = 0; i < data.length; i++){<option value='@data[i][dataField]'>@data[i][textField]</option>}</select>";
+            var str = "<select name='@name' @attr>@for(var i = 0; i < data.length; i++){<option value='@data[i][dataField]' ";
+            str = str + "@if(typeof selectedIndex!=='undefined' && selectedIndex==i){selected='selected'}";
+            str = str + "else if(typeof selectedValue!=='undefined' && selectedValue==data[i][dataField]){selected='selected'}"
+            str = str + ">@data[i][textField]</option>}</select>";
+            return str;
         },
         getValue: function () {
             return this.form.get(this.item.name).$el.find("option:selected").val();

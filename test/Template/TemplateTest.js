@@ -38,13 +38,23 @@ test("javascript block test", function () {
     equal(str, "this is kino");
 });
 
-test("@if @for @while test", function () {
-    var templateStr = "@if(1==0){<span>if you see this word,your test is fail</span>}";
+test("condition syntax test", function () {
+    var templateStr = "@if(1==0){<span>if you see this word,your test is failed</span>}";
     var str = kino.template(templateStr);
     equal(str, "");
 
-    templateStr = "@for(var i = 0; i < 3; i++){<span>@i</span>}";
+    templateStr = "@if(1==0){hello}else{world}";
     str = kino.template(templateStr);
+    equal(str, 'world');
+
+    templateStr = "@if(1==0){hello}else if(1==1){kino}else{world}";
+    str = kino.template(templateStr);
+    equal(str, 'kino');
+});
+
+test("@if @for @while test", function () {
+    var templateStr = "@for(var i = 0; i < 3; i++){<span>@i</span>}";
+    var str = kino.template(templateStr);
     equal(str, "<span>0</span><span>1</span><span>2</span>");
 
     templateStr = "@{var i = 3;}@while(i--){<span>@i</span>}";
@@ -88,4 +98,22 @@ test("mixture test", function () {
     var equalStr = "<select><option value='1'>1</option><option value='2'>2</option>";
     equalStr += "<option value='3' selected >3</option></select>";
     equal(html, equalStr);
+});
+
+
+test("Given '@@' and '@}' then it should out put '@' and '}' character", function () {
+    var templateStr = "{@name@@gmail.com@}";
+    var str = kino.template(templateStr, { name: 'kino' });
+    equal(str, '{kino@gmail.com}');
+});
+
+test("getTemplateFunc() should return a template function", function () {
+    var templateFunc = kino.getTemplateFunc("hello!@name");
+    equal(typeof templateFunc, 'function');
+});
+
+test("Given a template function to kino.template() then it should return a convented string", function () {
+    var tf = kino.getTemplateFunc("hello!@name");
+    var str = kino.template(tf, { name: 'kino' });
+    equal(str, 'hello!kino');
 });
