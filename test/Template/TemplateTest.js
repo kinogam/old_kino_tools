@@ -91,8 +91,13 @@ test("mixture test", function () {
 });
 
 
-test("out put '@' and '}' character", function () {
+test("Given '@@' and '@}' then it should out put '@' and '}' character", function () {
     var templateStr = "{@name@@gmail.com@}";
     var str = kino.template(templateStr, { name: 'kino' });
     equal(str, '{kino@gmail.com}');
+});
+
+test("getTemplateFunc() should return a template function", function () {
+    var templateFunc = kino.getTemplateFunc("helly!@name");
+    equal(typeof templateFunc, 'function');
 });
