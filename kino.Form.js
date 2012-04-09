@@ -19,6 +19,7 @@
 
     var fi = {
         _itemTypeHash: {},
+        _itemTemplateHash: {},
         addType: function (s) {
             ///<summary>
             ///添加控件类型
@@ -42,6 +43,12 @@
         },
         getType: function (typeName) {
             return this._itemTypeHash[typeName];
+        },
+        setTempFunc: function (typeName, templateFunc) {
+            return this._itemTemplateHash[typeName] = templateFunc;
+        },
+        getTempFunc: function (typeName) {
+            return this._itemTemplateHash[typeName];
         }
     };
 
@@ -122,7 +129,7 @@
     }
 
     f.prototype.setValues = function (s) {
-        for (var i in s) 
+        for (var i in s)
             this.itemMap[i].value = s[i];
     };
 
@@ -224,10 +231,14 @@
         };
         _item.attr = attrStr;
 
-        return kino.template(templateText, _item, {
-            enableCleanMode: true,
-            enableEscape: false
-        });
+        //判断模板函数是否生成，是则获取并使用，否则就创建一个并缓存起来
+        var tempFunc = fi.getTempFunc(item.type);
+        if (tempFunc == null)
+            tempFunc = fi.setTempFunc(item.type, kino.getTemplateFunc(templateText, {
+                enableCleanMode: true,
+                enableEscape: false
+            }));
+        return kino.template(tempFunc, _item);
     };
 
     p.isAddCell2Row = function (colnum, len, j, vcount) {
@@ -310,6 +321,7 @@
         getHtml: function () {
             var str = "<select name='@name' @attr>@for(var i = 0; i < data.length; i++){<option value='@data[i][dataField]' ";
             str = str + "@if(typeof selectedIndex!=='undefined' && selectedIndex==i){selected='selected'}";
+            str = str + "else if(typeof selectedValue!=='undefined' && selectedValue==data[i][dataField]){selected='selected'}"
             str = str + ">@data[i][textField]</option>}</select>";
             return str;
         },

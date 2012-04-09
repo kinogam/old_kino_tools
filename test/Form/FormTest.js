@@ -353,24 +353,24 @@ test("Given selectedIndex Then the equal index option Should be selected", funct
     equal(f.get("list1").$el.val(), "bx22");
 });
 
-//test("set default selected value", function () {
-//    var f = new kino.Form();
-//    f.renderTo(document.createElement("div"));
-//    f.addItem({
-//        type: "list",
-//        name: "list1",
-//        label: "下拉列表",
-//        data: [{ ax: "a11", value: "b22", text: "c33" },
-//        { ax: "a1", value: "bx2", text: "cx3" },
-//        { ax: "a12", value: "bx22", text: "cx32"}],
-//        selectedValue: "bx2"
-//    });
+test("Given selectedValue Then the equal value option Should be selected", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "list",
+        name: "list1",
+        label: "下拉列表",
+        data: [{ ax: "a11", value: "b22", text: "c33" },
+        { ax: "a1", value: "bx2", text: "cx3" },
+        { ax: "a12", value: "bx22", text: "cx32"}],
+        selectedValue: "bx2"
+    });
 
-//    f.bind();
+    f.bind();
 
-//    notEqual(f.render.innerHTML, null);
-//    equal(f.get('list1').$el.val(), "bx2");
-//});
+    notEqual(f.render.innerHTML, null);
+    equal(f.get('list1').$el.val(), "bx2");
+});
 
 
 //test("date type test", function () {
