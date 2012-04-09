@@ -307,7 +307,10 @@
             }
         },
         getHtml: function () {
-            return "<select name='@name' @attr>@for(var i = 0; i < data.length; i++){<option value='@data[i][dataField]'>@data[i][textField]</option>}</select>";
+            var str = "<select name='@name' @attr>@for(var i = 0; i < data.length; i++){<option value='@data[i][dataField]' ";
+            str = str + "@if(typeof selectedIndex!=='undefined' && selectedIndex==i){selected='selected'}";
+            str = str + ">@data[i][textField]</option>}</select>";
+            return str;
         },
         getValue: function () {
             return this.form.get(this.item.name).$el.find("option:selected").val();

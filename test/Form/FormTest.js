@@ -334,24 +334,24 @@ test("use filed 'text' and 'value' for default filedname", function () {
 
 
 
-//test("set default selected index", function () {
-//    var f = new kino.Form();
-//    f.renderTo(document.createElement("div"));
-//    f.addItem({
-//        type: "list",
-//        name: "list1",
-//        label: "下拉列表",
-//        data: [{ ax: "a11", value: "b22", text: "c33" },
-//        { ax: "a1", value: "bx2", text: "cx3" },
-//        { ax: "a12", value: "bx22", text: "cx32"}],
-//        selectedIndex: 2
-//    });
+test("Given selectedIndex Then the equal index option Should be selected", function () {
+    var f = new kino.Form();
+    f.renderTo(document.createElement("div"));
+    f.addItem({
+        type: "list",
+        name: "list1",
+        label: "下拉列表",
+        data: [{ ax: "a11", value: "b22", text: "c33" },
+        { ax: "a1", value: "bx2", text: "cx3" },
+        { ax: "a12", value: "bx22", text: "cx32"}],
+        selectedIndex: 2
+    });
 
-//    f.bind();
+    f.bind();
 
-//    notEqual(f.render.innerHTML, null);
-//    equal(f.get("list1").$el.val(), "bx22");
-//});
+    notEqual(f.render.innerHTML, null);
+    equal(f.get("list1").$el.val(), "bx22");
+});
 
 //test("set default selected value", function () {
 //    var f = new kino.Form();
