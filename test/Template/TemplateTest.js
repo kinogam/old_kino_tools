@@ -38,13 +38,23 @@ test("javascript block test", function () {
     equal(str, "this is kino");
 });
 
-test("@if @for @while test", function () {
-    var templateStr = "@if(1==0){<span>if you see this word,your test is fail</span>}";
+test("condition syntax test", function () {
+    var templateStr = "@if(1==0){<span>if you see this word,your test is failed</span>}";
     var str = kino.template(templateStr);
     equal(str, "");
 
-    templateStr = "@for(var i = 0; i < 3; i++){<span>@i</span>}";
+    templateStr = "@if(1==0){hello}else{world}";
     str = kino.template(templateStr);
+    equal(str, 'world');
+
+    templateStr = "@if(1==0){hello}else if(1==1){kino}else{world}";
+    str = kino.template(templateStr);
+    equal(str, 'kino');
+});
+
+test("@if @for @while test", function () {
+    var templateStr = "@for(var i = 0; i < 3; i++){<span>@i</span>}";
+    var str = kino.template(templateStr);
     equal(str, "<span>0</span><span>1</span><span>2</span>");
 
     templateStr = "@{var i = 3;}@while(i--){<span>@i</span>}";

@@ -22,6 +22,7 @@
         var logic = /@((?:if|for|while)\s*\([^\)]+\)\s*{)/g;
         var block = /@{([^}]*)}/g;
         var variable = /@([a-zA-Z0-9\.\[\]\(\)]+)/g;
+        var elseblock = new RegExp("([}\\s])(else\\s*(?:if\\s*\\([^\\)]+\\))?{)", "g");
         var s = "var __p='';with(obj||{}){__p=__p+'" + templateStr.replace(/\r/g, '\\r')
             .replace(/\\/g, '\\\\')
             .replace(/'/g, "\\'")
@@ -35,6 +36,9 @@
             .replace(logic, function (match, $1) {
                 return "';" + _unescape($1) + "__p=__p+'";
             })
+            .replace(elseblock, function(match, $1, $2){
+                return "';" + $1 + _unescape($2) + "__p=__p+'";
+            })
             .replace(variable, function (match, $1) {
                 var str = "';";
                 if (typeof setting !== 'undefined' && setting.enableCleanMode === true)
@@ -45,7 +49,7 @@
                     str = str + "__p=__p+_escape(" + $1 + ");__p=__p+'";
                 return str;
             })
-            .replace(/}/g, "';}__p=__p+'")
+            .replace(/}(?!\s*else)/g, "';}__p=__p+'")
             .replace(/%\$b\$%/g, '}')
             .replace(/%\$a\$%/g, '@')
              + "';};return __p;";
