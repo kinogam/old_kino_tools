@@ -2,7 +2,7 @@
 
 /// <reference path="../qunit/qunit.js" />
 
-test("replace test", function () {
+test("should convert single viariable", function () {
     var str = kino.template("Hey, @name!", { name: 'kino' });
     equal(str, "Hey, kino!");
 });
@@ -73,3 +73,26 @@ test("do not escape", function () {
     });
     equal(str, "<input style='display:none' />");
 })
+
+test("mixture test", function () {
+   var str = "<select>";
+   str += "@for(var i = 0; i < data.length; i++){";
+   str += "<option value='@data[i]'@if(selectedIndex == i){ selected }>@data[i]</option>";
+   str += "}</select>";
+
+    var html = kino.template(str, {
+        selectedIndex: 2,
+        data: [1, 2, 3]
+    });
+
+    var equalStr = "<select><option value='1'>1</option><option value='2'>2</option>";
+    equalStr += "<option value='3' selected >3</option></select>";
+    equal(html, equalStr);
+});
+
+
+test("out put '@' and '}' character", function () {
+    var templateStr = "{@name@@gmail.com@}";
+    var str = kino.template(templateStr, { name: 'kino' });
+    equal(str, '{kino@gmail.com}');
+});
