@@ -26,8 +26,9 @@
         var s = "var __p='';with(obj||{}){__p=__p+'" + templateStr.replace(/\r/g, '\\r')
             .replace(/\\/g, '\\\\')
             .replace(/'/g, "\\'")
-            .replace(/\n/g, '\\n')
-            .replace(/\t/g, '\\t')
+            .replace(/\n/g, '')
+            .replace(/\\\\r/g, '')
+            .replace(/\t/g, '')
             .replace(/@@/g, '%$a$%')
             .replace(/@}/g, '%$b$%')
             .replace(block, function (match, $1) {
@@ -36,7 +37,7 @@
             .replace(logic, function (match, $1) {
                 return "';" + _unescape($1) + "__p=__p+'";
             })
-            .replace(elseblock, function(match, $1, $2){
+            .replace(elseblock, function (match, $1, $2) {
                 return "';" + $1 + _unescape($2) + "__p=__p+'";
             })
             .replace(variable, function (match, $1) {
