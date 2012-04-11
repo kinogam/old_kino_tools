@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../jquery.js" type="text/javascript"></script>
+    <script src="../../kino.Template.js" type="text/javascript"></script>
+
+    <link href="kino-list.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(function () {
+            set("green", [
+                    "this is a new green list",
+                    "using kino.template",
+                    "try it again!"
+                ]);
+
+            $("#toggle").toggle(function () {
+                $("#container").fadeOut("slow", function () {
+                    set("blue", [
+                    "this is a new blue list",
+                    "using kino.template",
+                    "try it!" + new Date().getTime()
+                   ]);
+                    $("#container").fadeIn("slow");
+                });
+            }, function () {
+                $("#container").fadeOut("slow", function () {
+                    set("green", [
+                    "this is a new green list",
+                    "using kino.template",
+                    "and",
+                    "....",
+                    "try it again!" + new Date().getTime()
+                     ]);
+                    $("#container").fadeIn("slow");
+                });
+            });
+        });
+
+        function set(color, data) {
+            var tempstr = $("#kino-list").html();
+            var tempFn = kino.getTemplateFunc(tempstr);
+            var html = kino.template(tempFn, {
+                title: "hello " + color + " list",
+                color: color,
+                data: data
+            });
+            $("#container").html(html);
+        }
+    </script>
+</head>
+<body>
+    <input id="toggle" value="toggle" type="button" />
+    <div id="container">
+
+    </div>
+    <script type="text/template" id="kino-list">
+        <ul class="kino-list kino-list-@color">            
+            <li class="head">@title</li>
+            @for(var i = 0; i < data.length; i++){
+                <li class="@if(i==data.length-1){bottom}else{item}">@data[i]</li>
+            }
+        </ul>
+    </script>
+</body>
+</html>
