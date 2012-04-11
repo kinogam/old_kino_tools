@@ -21,7 +21,7 @@
         ///<returns type="Function" />
         var logic = /@((?:if|for|while)\s*\([^\)]+\)\s*{)/g;
         var block = /@{([^}]*)}/g;
-        var variable = /@([a-zA-Z0-9\.\[\]\(\)]+)/g;
+        var variable = new RegExp("@(new\\s+[a-z0-9]+\\([^\\)]*\\)[^\\s\\r\\n]*|[a-z0-9\\.\\[\\]\\(\\)]+)", "ig");
         var elseblock = new RegExp("([}\\s])(else\\s*(?:if\\s*\\([^\\)]+\\))?{)", "g");
         var s = "var __p='';with(obj||{}){__p=__p+'" + templateStr.replace(/\r/g, '\\r')
             .replace(/\\/g, '\\\\')

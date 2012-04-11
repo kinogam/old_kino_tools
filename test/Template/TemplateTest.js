@@ -117,3 +117,8 @@ test("Given a template function to kino.template() then it should return a conve
     var str = kino.template(tf, { name: 'kino' });
     equal(str, 'hello!kino');
 });
+
+test("It should use new XXX() as variable", function () {
+    var str = kino.template("now is @new Date().getTime()");
+    equal(/^now\sis\s\d+$/.test(str), true);
+});
