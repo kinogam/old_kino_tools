@@ -74,7 +74,7 @@ test("display none test", function () {
             label: "提示",
             type: "txt",
             attr: {
-                style:"display:none"
+                style: "display:none"
             }
         }]
     });
@@ -138,18 +138,18 @@ test("no type item with setValues test", function () {
 });
 
 module("item type", {
-    setup: function(){
+    setup: function () {
         render = document.createElement("div");
     }
 });
 
-test("define custom item type", function(){
+test("define custom item type", function () {
     kino.Item.addType({
         type: "hello",
-        getValue: function(){
+        getValue: function () {
             return "hello";
         },
-        getHtml: function(){
+        getHtml: function () {
             return "<label>hello</label>";
         },
         text: "hello attribute"
@@ -165,9 +165,9 @@ test("define custom item type", function(){
     notEqual($(f.render).html(), "");
 });
 
-test("raise error while no getValue or getHtml method support", function(){
+test("raise error while no getValue or getHtml method support", function () {
     expect(1)
-    raises(function(){
+    raises(function () {
         kino.Item.addType({
             type: "errortype"
         });
@@ -243,7 +243,7 @@ test("pure array data test", function () {
         type: "list",
         name: "list1",
         label: "下拉列表",
-        data: [[ "1", "2" ], [ "a1", "b2"]]
+        data: [["1", "2"], ["a1", "b2"]]
     });
 
     f.bind();
@@ -259,7 +259,7 @@ test("use filed 'text' and 'value' for default filedname", function () {
         type: "list",
         name: "list1",
         label: "下拉列表",
-        data: [{ value: "1", text: "2" }, {value:"a1", text:"b2"}]
+        data: [{ value: "1", text: "2" }, { value: "a1", text: "b2"}]
     });
 
     f.bind();
@@ -803,29 +803,30 @@ test("view mode test", function () {
 module("event");
 
 test("event test", function () {
+    kino.Item.addType({
+        type: 'temptype',
+        extend: 'txt'
+    });
+
     var f = new kino.Form({
         render: document.createElement("div"),
-        items: [{
-            name: "flightType",
-            label: "航程类型：",
-            type: "list",
-            data: [{ value: 0, text: "单程" }, { value: 1, text: "往返"}],
-            event: {
-                change: function (e, form) {
-                    form.get("startCity").$el.val("hello event");
+        items: [
+        {
+            name: "item1",
+            type: "temptype",
+            events: {
+                click: function () {
+                    this.value = "hello event";
                 }
             }
-        },
-        {
-            name: "startCity",
-            label: "出发城市：",
-            type: "txt"
-        }]
+        }
+        ]
     });
-    f.bind();
 
-    f.get("flightType").$el.trigger("change");
-    equal(f.get("startCity").$el.val(), "hello event");
+    f.bind();
+    f.get("item1").$el.trigger("click");
+    equal(f.get("item1").$el.val(), "hello event");
+    kino.Item.removeType("temptype");
 });
 
 test("remove item type", function () {

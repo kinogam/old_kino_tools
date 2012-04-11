@@ -107,6 +107,10 @@
             if (typeof itemType.init === 'function')
                 itemType.init.call(item);
 
+            //item事件绑定监听
+            if (typeof item.events !== 'undefined')
+                itemType.eventHandle(item, this);
+
             //添加到绑定后触发队列
             if (typeof itemType.after === 'function')
                 this.afterList.push(function () {
@@ -157,7 +161,7 @@
     f.templateStr = (function () {
         var str = "<table>";
         str = str + "@for(var i = 0; i < items.length; i++){"
-        str = str + "<tr><td>@items[i].obj.label</td><td>@items[i].html</td></tr>"
+        str = str + "<tr>@if(items[i].obj.label!=null){<td>@items[i].obj.label</td>}<td @if(items[i].obj.label==null){colspan='2'}>@items[i].html</td></tr>"
         str = str + "}</table>";
         return str;
     })();
@@ -210,9 +214,6 @@
     };
 
     p.getCellHtml = function (item) {
-        //获取模板文本
-        var templateText = fi.getType(item.type).getHtml();
-
         if (typeof this.initValues[item.name] !== 'undefined')
             item.value = this.initValues[item.name];
 
@@ -230,7 +231,12 @@
                 _item[i] = item[i];
         };
         _item.attr = attrStr;
+        return p.getConvertedHtml(_item);
+    };
 
+    p.getConvertedHtml = function (item) {
+        //获取模板文本
+        var templateText = fi.getType(item.type).getHtml();
         //判断模板函数是否生成，是则获取并使用，否则就创建一个并缓存起来
         var tempFunc = fi.getTempFunc(item.type);
         if (tempFunc == null)
@@ -238,8 +244,8 @@
                 enableCleanMode: true,
                 enableEscape: false
             }));
-        return kino.template(tempFunc, _item);
-    };
+        return kino.template(tempFunc, item);
+    }
 
     p.isAddCell2Row = function (colnum, len, j, vcount) {
         return colnum == 1 || vcount % colnum == 0 || j == len - 1;
@@ -289,7 +295,26 @@
 
     //增加类型
     fi.addType({
+        type: 'base',
+        eventHandle: function (item, form) {
+            var eventList = ["click", "change", "dbclick", "mouseover", "mouseout", "keyup", "keydown"];
+            for (var i = 0; i < eventList.length; i++)
+                if (typeof item.events[eventList[i]] !== 'undefined' && typeof item.events[eventList[i]] === 'function') {
+                    var eventName = eventList[i];
+                    $(form.render).on(eventName, "[name=" + item.name + "]", function (e) {
+                        item.events[eventName].call(this, e, item, form);
+                    });
+                }
+        },
+        getHtml: function () {
+            return "";
+        },
+        getValue: function () {
+            return null;
+        }
+    }).addType({
         type: 'txt',
+        extend: 'base',
         getHtml: function () {
             return "<input name='@name' type='text' value='@value' @attr />"
         },
@@ -306,6 +331,7 @@
         }
     }).addType({
         type: 'list',
+        extend: 'base',
         init: function () {
             if (typeof this.dataField === 'undefined' && typeof this.textField === 'undefined') {
                 if (Object.prototype.toString.call(this.data[0]) == '[object Array]') {
