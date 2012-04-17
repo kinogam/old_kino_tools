@@ -3,6 +3,17 @@
 
 module('kino.Require');
 
+test("check default rootpath", function () {
+   ok(/Base\/$/.test(kino.getRootPath()));
+});
+
+//test("set root path", function () {
+//    kino.setRootPath(".");
+//    ok(/Base\/$/.test(kino.getRootPath()));
+//    kino.setRootPath("../");
+//    ok(/test\/$/.test(kino.getRootPath()));
+//});
+
 asyncTest("load one js file", function () {
     expect(1);
     kino.require("TestClass.js", function () {

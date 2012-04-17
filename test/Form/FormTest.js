@@ -454,7 +454,6 @@ test("Given selectedValue Then the equal value option Should be selected", funct
 //        render: document.createElement("div"),
 //        items: [{
 //            name: "item1",
-//            label: "名字",
 //            type: "checkbox",
 //            data:[
 //                {text:"txt1", value:"val1"},
@@ -464,7 +463,7 @@ test("Given selectedValue Then the equal value option Should be selected", funct
 //    });
 
 //    f.bind();
-//    equal($(f.render).find(".kf-checkbox-item1").length > 0, true);
+//    equal(f.get('item1').$el.length > 0, true);
 //});
 
 //module("validate");
