@@ -1,4 +1,4 @@
-﻿(function (window) {
+﻿(function () {
     var k = {
         rnum: 0
     };
@@ -42,7 +42,7 @@
 
     p.handleUrl = function (url) {
         var currentScript = p.getCurrentScriptBlock();
-        if (typeof (currentScript.src) == "undefined")
+        if (currentScript.src == '' || typeof currentScript.src == undefined)
             return url;
         else {
             //匹配完整url模式
@@ -65,7 +65,7 @@
             }
             //当前页面模式
             else
-                return document.location.href.replace(/[^\/]+$/, url);
+                return currentScript.src.replace(/[^\/]+$/, url);
         }
     };
 
@@ -124,6 +124,11 @@
     /**********************************************************************************************
     Public
     *********************************************************************************************/
+
+
+
+
+
     k.resetLoadHash = function () {
         ///<summary>
         ///清空哈希加载列表
@@ -131,6 +136,28 @@
         k.rnum = 0;
         p.loadHash = {};
     };
+
+
+
+    k.getRootPath = function () {
+        ///<summary>
+        ///获取根目录url路径
+        ///</summary>
+        ///<returns type="String"/>
+        return p.rootPath;
+    };
+
+    k.setRootPath = function (url) {
+        ///<summary>
+        ///设置根目录url路径
+        ///</summary>
+        ///<param name="url" type="String"/>
+        if (/^\./.test(url))
+            p.rootPath = document.location.href.replace(/([^\/?]+)(?:\?.*$|$)/, "") + url.replace(/^\.(?:\/)?/, "");
+    };
+
+    //init rootPath as current referer page
+    k.setRootPath(".");
 
     k.require = function (item, callback) {
         ///<summary>
@@ -197,5 +224,5 @@
     };
 
 
-    window.kino = k;
-})(window);
+    this.kino = k;
+})();

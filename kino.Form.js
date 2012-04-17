@@ -354,6 +354,14 @@
         getValue: function () {
             return this.form.get(this.item.name).$el.find("option:selected").val();
         }
+    }).addType({
+        type: 'checkbox',
+        getHtml: function () {
+            var str = ""
+        },
+        getValue: function () {
+
+        }
     });
 
 
