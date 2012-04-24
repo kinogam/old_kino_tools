@@ -220,83 +220,43 @@ select("day xd,hour || ':00:00' datetime").query();
     notEqual(result, null);
 });
 
-var pdata = [
-[1, 0.3],
-[1, 0.1],
-[2, 1.3],
-[2, 0.6],
-[1, 3.3],
-[1,0.2]];
+//var pdata = [
+//[1, 0.3],
+//[1, 0.1],
+//[2, 1.3],
+//[2, 0.6],
+//[1, 3.3],
+//[1, 0.2]];
 
-function getPStore() {
-    var store = new kino.Store();
-    store.data = pdata;
-    return store;
-}
-test("pure array,select index test", function () {
-    var store = getPStore();
-    var data = store.select("{0},{1}").orderby("{0} desc").query();
-    notEqual(data, null);
-    equal(data[0][0], 2);
+//var strData = ["kino", "tesr", "kino", "bookmark", "tesr"];
 
-});
-
-test("pure array, aggregation test", function () {
-    var store = getPStore();
-    var data = store.select("{0},sum({1}) sumcol").groupby("{0}").query();
-    notEqual(data, null);
-});
-
-test("pure array, distinct test", function () {
-    var store = getPStore();
-    var data = store.select("distinct {0}").orderby("{0} desc").query();
-    notEqual(data, null);
-});
-
-
-//test("not in test", function () {
+//function getPStore() {
 //    var store = new kino.Store();
-//    store.data = [{ "col1": "1", "col2": "a" },
-//    { "col1": "2", "col2": "b" },
-//    { "col1": "3", "col2": "c" },
-//    { "col1": "4", "col2": "d" },
-//    { "col1": "5", "col2": "e"}];
-//    store.notIn("col2", [
-//        "b", "c"
-//    ]);
-//});
-
-
-//module("ajax query");
-
-//function getAjaxStore() {
-//    var store = new kino.Store();
-//    store.ajax.enable = true;
-//    store.ajax.action = "test";
-
-//    //mock ajax handle method
-//    store.ajaxHandle = function (s) {
-//        s.success.call(null, pdata, s);
-//    }
-
+//    store.data = pdata;
 //    return store;
 //}
+//test("pure array,select index test", function () {
+//    var store = getPStore();
+//    var data = store.select("{0},{1}").orderby("{0} desc").query();
+//    notEqual(data, null);
+//    equal(data[0][0], 2);
 
-
-//test("check ajax request", function () {
-//    var store = getAjaxStore();
-//    store.ajax.size = 3;
-//    
-//    store.select("{0} a,sum({1}) b").orderby("{0}").groupby("{0}").where("{1} > 1").query(function (data, s) {
-//        notEqual(s.type, null, "type");
-//        notEqual(s.param.index, null, "index");
-//        notEqual(s.param.size, null, "size");
-//        notEqual(s.param.orderby, null,"orderby");
-//        notEqual(s.param.groupby, null, "groupby");
-//        notEqual(s.param.select, null, "select");
-//        notEqual(s.param.where, null, "where");
-//    });
 //});
+
+//test("pure array, aggregation test", function () {
+//    var store = getPStore();
+//    var data = store.select("{0},sum({1}) sumcol").groupby("{0}").query();
+//    notEqual(data, null);
+//});
+
+//test("pure array, distinct test", function () {
+//    var store = getPStore();
+//    var data = store.select("distinct {0}").orderby("{0} desc").query();
+//    equal(data[0][0], 1);
+//    equal(data[1][0], 2);
+//});
+
+
 
 
 

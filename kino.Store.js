@@ -289,10 +289,12 @@
                             _type = "string";
                             _val = _val.replace(/^'|'$/g, "");
                         }
-                        else {
-                            _type = "col";
-                            _val = _val.replace(/^{|}$/g, "");
+                        else if (/^{\d+}$/.test(_val)) {
+                            _type = "number";
+                            _val = Number(_val.replace(/^{|}$/g, ""));
                         }
+                        else
+                            _type = "col";
                         item.params = [{ type: _type, val: _val}];
                         ss.expItems.push(item);
                     }
