@@ -21,8 +21,6 @@
         initStore: function () {
             this.data = null;
             this.initController();
-            this.initAjax();
-            this.ajaxHandle = KAjax;
         },
         initController: function () {
             ///<summary>
@@ -39,37 +37,15 @@
                 groupbyExp: ""
             };
         },
-        initAjax: function () {
-            ///<summary>
-            ///init kstore's ajax property
-            ///</summary>
-            this.ajax = {
-                action: null,
-                type: "POST",
-                enable: false,
-                index: 0,
-                size: 100,
-                hasNext: false
-            }
-        },
         query: function (callback) {
             ///<summary>
             ///get data by query,every call will init controller's property
-            ///when ajax.enable = true, it send ajax request and get data
             //</summary>
             ///<param name="callback" type="Function">
             ///callback function,after query
             ///</param>
             try {
-                if (this.ajax.enable) {
-                    if (this.ajax.index == 0 && this.data != null && !this.ajax.hasNext)
-                        return this.localQuery(callback);
-                    else
-                        return this.ajaxQuery(callback);
-                }
-                else
                     return this.localQuery(callback);
-
             }
             catch (e) {
                 throw e.Message;
@@ -95,18 +71,6 @@
             if (callback != null)
                 callback.call(null, result);
             return result;
-        },
-        ajaxQuery: function (callback) {
-            ///<summary>
-            ///execute a ajax query
-            ///</summary>
-            ///<param name="callback" type="Function">
-            ///callback function,after query
-            ///</param>
-            ///<return type="Array"></return>
-
-            this.ajax.controller = this.controller;
-            private.getAjaxData(this, callback);
         },
         select: function (exp) {
             ///<summary>
@@ -209,14 +173,6 @@
             if (exp != null)
                 this.controller.whereExp = exp;
             return this;
-        },
-        getNext: function (callback) {
-            this.ajax.index++;
-            private.getAjaxData(this, callback);
-        },
-        getPrev: function (callback) {
-            this.ajax.index--;
-            private.getAjaxData(this, callback);
         }
 
     }
@@ -623,111 +579,9 @@
                     newdata.push(result[i]);
             }
             return newdata;
-        },
-        getAjaxData: function (store, callback) {
-            var setting = {
-                type: store.ajax.type,
-                action: store.ajax.action,
-                param: {
-                    index: store.ajax.index,
-                    size: store.ajax.size,
-                    orderby: store.ajax.controller.orderbyExp,
-                    where: store.ajax.controller.whereExp,
-                    select: store.ajax.controller.selectExp,
-                    groupby: store.ajax.controller.groupbyExp
-                },
-                success: function (result, setting) {
-                    if (typeof (result) == "string")
-                        eval("store.data = " + result);
-                    else
-                        store.data = result;
-
-                    if (store.data.length > store.ajax.size) {
-                        store.ajax.hasNext = true;
-                        store.data.pop();
-                    }
-                    else
-                        store.hasNext = false;
-
-                    if (callback != null)
-                        callback.call(null, result, setting);
-                }
-            };
-
-            store.ajaxHandle(setting);
         }
     }
 
-
-
-    var KAjax = function (s) {
-        ///<summary>
-        ///a function for calling ajax
-        ///</summary>
-        ///<param name="s" type="Json">
-        ///json format: {
-        //action : "";
-        //type : "POST";
-        //param : null;
-        //async : true;
-        //success : null;
-        //error : null;
-        //xmlHttp : KAjaxHandler.getXmlHttpRequest();
-        //}
-
-        var x = new KAjaxHandler();
-        x.setMember(s);
-
-        x.xmlHttp.onreadystatechange = function () {
-            if (x.xmlHttp.readyState == 4 && ((x.xmlHttp.status >= 200 && x.xmlHttp.status < 300)
-                 || x.xmlHttp.status == 304 || x.xmlHttp.status == 1223)) {
-                if (x.success)
-                    x.success.call(x, x.xmlHttp.responseText);
-            }
-            else if (x.xmlHttp.readyState == 4) {
-                if (x.error)
-                    x.error.call(x, x.xmlHttp.responseText);
-            }
-        }
-        x.xmlHttp.open(x.type, x.action, x.async);
-        try {
-            x.xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            x.xmlHttp.send(KAjaxHandler.json2url(x.param));
-        }
-        catch (e) {
-        }
-    }
-
-    var KAjaxHandler = function () {
-        this.action = "";
-        this.type = "POST";
-        this.param = null;
-        this.async = true;
-        this.success = null;
-        this.error = null;
-        this.xmlHttp = KAjaxHandler.getXmlHttpRequest();
-    }
-    KAjaxHandler.prototype.setMember = function (s) {
-        if (s != null) {
-            for (var i in s) {
-                this[i] = s[i];
-            }
-        }
-    }
-    KAjaxHandler.getXmlHttpRequest = function () {
-        return window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-
-    }
-    KAjaxHandler.json2url = function (json) {
-        var url = "";
-        for (var i in json) {
-            if (json[i] != null)
-                url += "&" + encodeURIComponent(i) + "=" + encodeURIComponent(json[i]);
-            else
-                url += "&" + encodeURIComponent(i) + "=";
-        }
-        return url.replace(/^&/, "");
-    }
 
     // Module
     if (typeof module != 'undefined' && module.exports) {
