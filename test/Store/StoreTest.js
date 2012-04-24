@@ -267,36 +267,36 @@ test("pure array, distinct test", function () {
 //});
 
 
-module("ajax query");
+//module("ajax query");
 
-function getAjaxStore() {
-    var store = new kino.Store();
-    store.ajax.enable = true;
-    store.ajax.action = "test";
+//function getAjaxStore() {
+//    var store = new kino.Store();
+//    store.ajax.enable = true;
+//    store.ajax.action = "test";
 
-    //mock ajax handle method
-    store.ajaxHandle = function (s) {
-        s.success.call(null, pdata, s);
-    }
+//    //mock ajax handle method
+//    store.ajaxHandle = function (s) {
+//        s.success.call(null, pdata, s);
+//    }
 
-    return store;
-}
+//    return store;
+//}
 
 
-test("check ajax request", function () {
-    var store = getAjaxStore();
-    store.ajax.size = 3;
-    
-    store.select("{0} a,sum({1}) b").orderby("{0}").groupby("{0}").where("{1} > 1").query(function (data, s) {
-        notEqual(s.type, null, "type");
-        notEqual(s.param.index, null, "index");
-        notEqual(s.param.size, null, "size");
-        notEqual(s.param.orderby, null,"orderby");
-        notEqual(s.param.groupby, null, "groupby");
-        notEqual(s.param.select, null, "select");
-        notEqual(s.param.where, null, "where");
-    });
-});
+//test("check ajax request", function () {
+//    var store = getAjaxStore();
+//    store.ajax.size = 3;
+//    
+//    store.select("{0} a,sum({1}) b").orderby("{0}").groupby("{0}").where("{1} > 1").query(function (data, s) {
+//        notEqual(s.type, null, "type");
+//        notEqual(s.param.index, null, "index");
+//        notEqual(s.param.size, null, "size");
+//        notEqual(s.param.orderby, null,"orderby");
+//        notEqual(s.param.groupby, null, "groupby");
+//        notEqual(s.param.select, null, "select");
+//        notEqual(s.param.where, null, "where");
+//    });
+//});
 
 
 
