@@ -122,3 +122,8 @@ test("It should use new XXX() as variable", function () {
     var str = kino.template("now is @new Date().getTime()");
     equal(/^now\sis\s\d+$/.test(str), true);
 });
+
+test("fix bug with ')'", function () {
+    var str = kino.template("Address:(@Address)", { Address: "test load" });
+    equal(str, "Address:(test load)");
+});
