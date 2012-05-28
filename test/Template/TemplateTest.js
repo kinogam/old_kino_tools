@@ -62,8 +62,9 @@ test("@if @for @while test", function () {
     equal(str, "<span>2</span><span>1</span><span>0</span>");
 });
 
+
 test("escape test", function () {
-    var templateStr = "<input yyy='@test' xxx=\"@otherAttr\" />";
+    var templateStr = "<input yyy='@Html.escape(test)' xxx=\"@Html.escape(otherAttr)\" />";
     var str = kino.template(templateStr, { test: "kino's test", otherAttr: "\"one more test\"" });
     equal(str, "<input yyy='kino&#x27;s test' xxx=\"&quot;one more test&quot;\" />");
 });
@@ -76,13 +77,13 @@ test("array param test", function () {
     equal(str, "<span>1</span><span>2</span><span>3</span>");
 });
 
-test("do not escape", function () {
-    var templateStr = "<input @attr />";
-    var str = kino.template(templateStr, { attr: "style='display:none'" }, {
-        enableEscape: false
-    });
-    equal(str, "<input style='display:none' />");
-})
+//test("do not escape", function () {
+//    var templateStr = "<input @attr />@content";
+//    var str = kino.template(templateStr, { attr: "style='display:none'", content: "<span>hello</span>" }, {
+//        enableEscape: false
+//    });
+//    equal(str, "<input style='display:none' /><span>hello</span>");
+//});
 
 test("mixture test", function () {
    var str = "<select>";

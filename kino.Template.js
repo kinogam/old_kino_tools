@@ -1,7 +1,9 @@
 ﻿(function () {
-    var _escape = function (str) {
-        return ('' + str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g, '&#x2F;');
+    var Html = {
+        escape: function (value) {
+            return ('' + value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g, '&#x2F;');
+        }
     };
 
     var _unescape = function (code) {
@@ -21,7 +23,7 @@
         ///<returns type="Function" />
         var logic = /@((?:if|for|while)\s*\([^\)]+\)\s*{)/g;
         var block = /@{([^}]*)}/g;
-        
+
         var variable = /@((?:new\s+[a-z0-9]+\([^\)]*\)|[a-z0-9]+)(?:\.|\([^\)]*\)|[a-z0-9\[\]]+)*)/ig;
         var elseblock = new RegExp("([}\\s])(else\\s*(?:if\\s*\\([^\\)]+\\))?{)", "g");
         var s = "var __p='';with(obj||{}){__p=__p+'" + templateStr.replace(/\r/g, '\\r')
@@ -45,10 +47,7 @@
                 var str = "';";
                 if (typeof setting !== 'undefined' && setting.enableCleanMode === true)
                     str = str + "if(typeof " + $1 + " === 'undefined')" + $1 + "='';";
-                if (typeof setting !== 'undefined' && setting.enableEscape === false)
-                    str = str + "__p=__p+" + $1 + ";__p=__p+'";
-                else
-                    str = str + "__p=__p+_escape(" + $1 + ");__p=__p+'";
+                str = str + "__p=__p+" + $1 + ";__p=__p+'";
                 return str;
             })
             .replace(/}(?!\s*else)/g, "';}__p=__p+'")
@@ -56,7 +55,7 @@
             .replace(/%\$a\$%/g, '@')
              + "';};return __p;";
 
-        return new Function('_escape', 'obj', s);
+            return new Function('Html', 'obj', s);
     };
 
     var t = function (temp, data, setting) {
@@ -77,7 +76,7 @@
             func = temp;
         else
             func = gf(temp, setting);
-        return func.call(null, _escape, data);
+        return func.call(null, Html, data);
     };
 
 
